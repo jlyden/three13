@@ -1,0 +1,11 @@
+313 in a LAMP stack
+
+*Todo*
+
+
+*Resources*
+https://box.scotch.io/
+https://wsvincent.com/javascript-object-oriented-deck-cards/
+https://www.thatsoftwaredude.com/content/6196/coding-a-card-deck-in-javascript
+https://www.killerphp.com/tutorials/php-objects-page-1/
+
