@@ -1,11 +1,42 @@
-313 in a LAMP stack
+313 via LAMP stack
 
 *Todo*
+Define round class including deal() and go_out()
+Define user class
+Define hand class including draw() and discard()
+
+Create game
+ - need usernames to include
+ - order of usernames determines user_order
+ - prep_deck()
+ - insert rows in db 
+ 
+Start round 
+ - shuffle(), deal()
+ - prompt user_one to draw and discard
+
+During round
+ - users prompted to draw/discard in order
+ - update db at end of each user's turn - or save & cache 'til end of round?
+   - including round.deck, game_user.user_hand, and round.user_order_next
+
+End of round
+ - if(turn), user can go_out() (includes discard action)
+   -- validate user's hand - if invalid, round continues
+   -- if valid, update user's score & clear user's hand
+   -- set end_of_round = true: all other users get only one more turn
+      -- after each discard(), evaluate each of their hands and calculate score
+ - after last user has discarded, start next round 
 
 
 *Resources*
 https://box.scotch.io/
 https://wsvincent.com/javascript-object-oriented-deck-cards/
-https://www.thatsoftwaredude.com/content/6196/coding-a-card-deck-in-javascript
 https://www.killerphp.com/tutorials/php-objects-page-1/
-
+https://www.brainbell.com/tutorials/php/php7-oop-beginners.html
+https://www.valuebound.com/resources/blog/understanding-phpunit-and-how-to-write-unit-test-cases
+https://www.php.net/serialize
+https://codinginfinite.com/getting-started-web-application-php-mysql-tutorials/
+https://www.taniarascia.com/create-a-simple-database-app-connecting-to-mysql-with-php/
+https://catswhocode.com/phpcache/
+https://www.web-development-blog.com/why-should-you-cache-your-php-website/
