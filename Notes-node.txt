@@ -1,4 +1,4 @@
-313 via LAMP stack
+313 via node/express
 
 *Todo*
 Define round class including deal() and go_out()

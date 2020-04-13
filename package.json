@@ -1,0 +1,34 @@
+{
+  "name": "three13",
+  "version": "1.0.0",
+  "description": "Play 313 online with your family and friends",
+  "main": "index.js",
+  "dependencies": {
+    "@types/express": "^4.17.6",
+    "express": "^4.17.1",
+    "request": "^2.88.2",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
+    "ts-node": "^8.8.2"
+  },
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "test": "mocha -r ts-node/register test/**/** --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlyden/three13.git"
+  },
+  "keywords": [],
+  "author": "jennifer lyden",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jlyden/three13/issues"
+  },
+  "homepage": "https://github.com/jlyden/three13#readme"
+}
