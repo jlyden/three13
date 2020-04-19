@@ -1,9 +1,13 @@
-// Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
+import { Card } from './index';
+
+// Losely based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
 export class Deck{
-  public suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
-  public values = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-  private deck: Object[];
+  static suits: string[] = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
+  static values: number[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  
+  public deck: Array<Card>;
+
   length: any;
   reduce: any;
 
@@ -38,17 +42,14 @@ export class Deck{
   private assemble(){
     this.deck = [];
 
-    for (let suit in this.suits) {
-      for (let value in this.values) {
-        this.deck.push(`{
-          suit: ${this.suits[suit]},
-          value: ${this.values[value]}
-        }`);
+    for (let suit in Deck.suits) {
+      for (let value in Deck.values) {
+        let card = new Card(
+          Deck.suits[suit],
+          Deck.values[value]
+        );
+        this.deck.push(card);
       }
     }
-  }
-
-  toString() {
-
   }
 }
