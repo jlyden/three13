@@ -16,11 +16,18 @@
     "@types/mocha": "^7.0.2",
     "chai": "^4.2.0",
     "mocha": "^7.1.1",
-    "ts-node": "^8.8.2"
+    "nodemon": "^2.0.3",
+    "prettier": "^2.0.4",
+    "ts-node": "^8.8.2",
+    "tslint": "^6.1.1",
+    "tslint-config-prettier": "^1.18.0"
   },
   "scripts": {
-    "dev": "nodemon ./index.js",
-    "test": "mocha -r ts-node/register test/**/** --reporter spec"
+    "dev": "nodemon ./lib/index.js",
+    "build": "tsc",
+    "test": "mocha -r ts-node/register test/**/** --reporter spec",
+    "format": "prettier --write \"src/**/*.ts\" \"lib/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
   },
   "repository": {
     "type": "git",

@@ -16,12 +16,13 @@ describe("deck class methods", function() {
     it("generates a deck with 11 cards for each of 4 suits", function() {
       let testDeck = new Deck();
 
-      let groupBySuit = testDeck.deck.reduce((tally, card) => {
+      const groupBySuit: { [key: string]: number }  = testDeck.deck.reduce(
+        (tally: { [key: string]: number }, card) => {
         tally[card.suit] = tally[card.suit] + 1 || 1;
         return tally;
       }, {});
-      let arrayOfSuitCounts = Object.values(groupBySuit);
-      let arrayOfSuits = Object.keys(groupBySuit);
+      const arrayOfSuitCounts: number[] = Object.values(groupBySuit);
+      const arrayOfSuits: string[] = Object.keys(groupBySuit);
 
       expect(arrayOfSuitCounts.length).to.equal(4);
       expect(arrayOfSuitCounts).to.deep.equal([11,11,11,11]);
@@ -31,13 +32,14 @@ describe("deck class methods", function() {
     it("generates a deck with 4 (of different suits) cards for each number/face card", function() {
       let testDeck = new Deck();
 
-      let groupByValue = testDeck.deck.reduce((tally, card) => {
+      const groupByValue: { [key: string]: number }  = testDeck.deck.reduce(
+        (tally: { [key: string]: number }, card) => {
         tally[card.value] = tally[card.value] + 1 || 1;
         return tally;
       }, {});
 
-      let arrayOfValueCounts = Object.values(groupByValue);
-      let arrayOfValues = Object.keys(groupByValue);
+      let arrayOfValueCounts: number[] = Object.values(groupByValue);
+      let arrayOfValues: string[] = Object.keys(groupByValue);
       expect(arrayOfValueCounts.length).to.equal(11);
       expect(arrayOfValueCounts).to.deep.equal([4,4,4,4,4,4,4,4,4,4,4]);
       expect(arrayOfValues).to.have.members(['3','4','5','6','7','8','9','10','11','12','13']);

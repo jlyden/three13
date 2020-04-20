@@ -6,14 +6,14 @@ export class Deck{
   static suits: string[] = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
   static values: number[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
   
-  public deck: Array<Card>;
+  public deck: Card[];
 
   constructor(){
     this.deck = [];
     this.assemble();
   }
 
-  public shuffle(){
+  public shuffle(): Deck {
     const { deck } = this;
 
     // Start with end of deck
@@ -35,17 +35,19 @@ export class Deck{
     return this.deck.pop();
   }
 
-  private assemble(){
+  private assemble(): Deck{
     this.deck = [];
 
-    for (let suit in Deck.suits) {
-      for (let value in Deck.values) {
-        let card = new Card(
+    for (const suit in Deck.suits) {
+      for (const value in Deck.values) {
+        const card = new Card(
           Deck.suits[suit],
           Deck.values[value]
         );
         this.deck.push(card);
       }
     }
+
+    return this;
   }
 }
