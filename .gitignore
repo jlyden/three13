@@ -41,6 +41,8 @@ build/Release
 node_modules/
 jspm_packages/
 
+package-lock.json
+
 # TypeScript v1 declaration files
 typings/
 
@@ -59,6 +61,7 @@ typings/
 
 # rollup.js default build output
 dist/
+lib/
 
 # Serverless directories
 .serverless/
