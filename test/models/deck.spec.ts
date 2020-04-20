@@ -1,11 +1,13 @@
 import * as chai from 'chai';
+import * as _ from 'lodash';
 import 'mocha';
 import { Deck } from "../../src/models/deck";
+import { Card } from '../../src/models';
 
 const { expect } = chai;
 
 describe("deck class methods", function() {
-  describe("assemble deck", function() {
+  describe("assemble", function() {
     it("generates a deck of cards with 44 members", function() {
       let testDeck = new Deck();
       expect(testDeck.deck.length).to.equal(44);
@@ -41,13 +43,23 @@ describe("deck class methods", function() {
       expect(arrayOfValues).to.have.members(['3','4','5','6','7','8','9','10','11','12','13']);
     });
   });
-/*
-  describe("shuffle deck", function() {
 
+  describe("shuffle", function() {
+    it("mixes up a deck of cards", function() {
+      let testDeck = new Deck();
+      let beforeDeck = _.cloneDeep(testDeck);
+      testDeck.shuffle();
+      expect(testDeck).to.not.deep.equal(beforeDeck);
+    });
   });
 
-  describe("deal from deck", function() {
-
+  describe("dealOneCard", function() {
+    it("removes the final element from the deck", function() {
+      let testDeck = new Deck();
+      let dealtCard = testDeck.dealOneCard();
+      let expectedCard = new Card('Spades', 13);
+      expect(testDeck.deck.length).to.equal(43);
+      expect(dealtCard).to.deep.equal(expectedCard);
+    });
   });
-*/
 })

@@ -1,6 +1,6 @@
 import { Card } from './index';
 
-// Losely based on https://wsvincent.com/javascript-object-oriented-deck-cards/
+// Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
 export class Deck{
   static suits: string[] = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
@@ -8,34 +8,30 @@ export class Deck{
   
   public deck: Array<Card>;
 
-  length: any;
-  reduce: any;
-
   constructor(){
     this.deck = [];
     this.assemble();
-    this.shuffle();
   }
 
   public shuffle(){
     const { deck } = this;
 
     // Start with end of deck
-    let card_countdown = deck.length;
-    let element_to_swap: number;
+    let cardCountdown = deck.length;
+    let cardToSwap: number;
 
-    while(card_countdown){
+    while(cardCountdown){
       // Get value from front of deck
-      element_to_swap = Math.floor(Math.random() * card_countdown--);
+      cardToSwap = Math.floor(Math.random() * cardCountdown--);
 
       // and swap with value from end of deck
-      [deck[card_countdown], deck[element_to_swap]] = [deck[element_to_swap], deck[card_countdown]];
+      [deck[cardCountdown], deck[cardToSwap]] = [deck[cardToSwap], deck[cardCountdown]];
     }
 
     return this;
   }
 
-  public deal(){
+  public dealOneCard(){
     return this.deck.pop();
   }
 
