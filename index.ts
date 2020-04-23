@@ -26,3 +26,6 @@ app.get("/", (req, res) => {
 /**
  * Server Activation
  */
+app.listen(port, () => {
+  console.log(`Listening to requests on http://localhost:${port}`);
+});
