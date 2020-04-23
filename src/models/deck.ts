@@ -2,13 +2,13 @@ import { Card } from './index';
 
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
-export class Deck{
+export class Deck {
   static suits: string[] = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
   static values: number[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-  
+
   public deck: Card[];
 
-  constructor(){
+  constructor() {
     this.deck = [];
     this.assemble();
   }
@@ -20,7 +20,7 @@ export class Deck{
     let cardCountdown = deck.length;
     let cardToSwap: number;
 
-    while(cardCountdown){
+    while (cardCountdown) {
       // Get value from front of deck
       cardToSwap = Math.floor(Math.random() * cardCountdown--);
 
@@ -31,19 +31,16 @@ export class Deck{
     return this;
   }
 
-  public dealOneCard(){
+  public dealOneCard() {
     return this.deck.pop();
   }
 
-  private assemble(): Deck{
+  private assemble(): Deck {
     this.deck = [];
 
     for (const suit in Deck.suits) {
       for (const value in Deck.values) {
-        const card = new Card(
-          Deck.suits[suit],
-          Deck.values[value]
-        );
+        const card = new Card(Deck.suits[suit], Deck.values[value]);
         this.deck.push(card);
       }
     }

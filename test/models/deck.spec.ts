@@ -6,15 +6,15 @@ import { Card } from '../../src/models';
 
 const { expect } = chai;
 
-describe("deck class methods", function() {
-  describe("assemble", function() {
-    it("generates a deck of cards with 44 members", function() {
-      let testDeck = new Deck();
+describe("deck class methods", ()=> {
+  describe("assemble", () => {
+    it("generates a deck of cards with 44 members", () => {
+      const testDeck = new Deck();
       expect(testDeck.deck.length).to.equal(44);
     });
 
-    it("generates a deck with 11 cards for each of 4 suits", function() {
-      let testDeck = new Deck();
+    it("generates a deck with 11 cards for each of 4 suits", () => {
+      const testDeck = new Deck();
 
       const groupBySuit: { [key: string]: number }  = testDeck.deck.reduce(
         (tally: { [key: string]: number }, card) => {
@@ -29,8 +29,8 @@ describe("deck class methods", function() {
       expect(arrayOfSuits).to.have.members(['Clubs','Diamonds','Hearts','Spades']);
     });
 
-    it("generates a deck with 4 (of different suits) cards for each number/face card", function() {
-      let testDeck = new Deck();
+    it("generates a deck with 4 (of different suits) cards for each number/face card", () => {
+      const testDeck = new Deck();
 
       const groupByValue: { [key: string]: number }  = testDeck.deck.reduce(
         (tally: { [key: string]: number }, card) => {
@@ -38,28 +38,28 @@ describe("deck class methods", function() {
         return tally;
       }, {});
 
-      let arrayOfValueCounts: number[] = Object.values(groupByValue);
-      let arrayOfValues: string[] = Object.keys(groupByValue);
+      const arrayOfValueCounts: number[] = Object.values(groupByValue);
+      const arrayOfValues: string[] = Object.keys(groupByValue);
       expect(arrayOfValueCounts.length).to.equal(11);
       expect(arrayOfValueCounts).to.deep.equal([4,4,4,4,4,4,4,4,4,4,4]);
       expect(arrayOfValues).to.have.members(['3','4','5','6','7','8','9','10','11','12','13']);
     });
   });
 
-  describe("shuffle", function() {
-    it("mixes up a deck of cards", function() {
-      let testDeck = new Deck();
-      let beforeDeck = _.cloneDeep(testDeck);
+  describe("shuffle", () => {
+    it("mixes up a deck of cards", () => {
+      const testDeck = new Deck();
+      const beforeDeck = _.cloneDeep(testDeck);
       testDeck.shuffle();
       expect(testDeck).to.not.deep.equal(beforeDeck);
     });
   });
 
-  describe("dealOneCard", function() {
-    it("removes the final element from the deck", function() {
-      let testDeck = new Deck();
-      let dealtCard = testDeck.dealOneCard();
-      let expectedCard = new Card('Spades', 13);
+  describe("dealOneCard", () => {
+    it("removes the final element from the deck", () => {
+      const testDeck = new Deck();
+      const dealtCard = testDeck.dealOneCard();
+      const expectedCard = new Card('Spades', 13);
       expect(testDeck.deck.length).to.equal(43);
       expect(dealtCard).to.deep.equal(expectedCard);
     });
