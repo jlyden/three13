@@ -1,10 +1,14 @@
-import express = require("express");
-const app = express();
-const port = "5000";
+import dotenv from "dotenv";
+import express from "express";
+import path from "path";
+import * as routes from "./routes";
 
-app.get("/", (req, res) => {
-  res.status(200).send("Three 13");
-});
+dotenv.config();
+const port = process.env.SERVER_PORT;
+
+const app = express();
+
+routes.register(app);
 
 app.listen(port, () => {
   // tslint:disable-next-line: no-console
