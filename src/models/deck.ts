@@ -38,11 +38,15 @@ export class Deck {
   private assemble(): Deck {
     this.deck = [];
 
+    // tslint:disable-next-line: forin
     for (const suit in Deck.suits) {
+
+      // tslint:disable-next-line: forin
       for (const value in Deck.values) {
         const card = new Card(Deck.suits[suit], Deck.values[value]);
         this.deck.push(card);
       }
+
     }
 
     return this;
