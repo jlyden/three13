@@ -11,6 +11,7 @@
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "mongodb": "^3.5.6",
+    "neverthrow": "^2.2.0",
     "react": "^16.13.1",
     "request": "^2.88.2",
     "typescript": "^3.8.3"
@@ -33,7 +34,7 @@
     "start": "node .",
     "build": "tsc",
     "test": "mocha -r ts-node/register test/**/** --reporter spec",
-    "format": "prettier --write \"src/**/*.ts\" \"lib/**/*.js\"",
+    "format": "prettier --write \"src/**/*.ts\" \"dist/**/*.js\"",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix"
   },
   "repository": {

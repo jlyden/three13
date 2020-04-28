@@ -1,19 +1,18 @@
-import * as chai from 'chai';
-import * as _ from 'lodash';
+import chai from 'chai';
 import 'mocha';
-import { Deck } from "../../src/models/deck";
-import { Card } from '../../src/models';
+import _ from 'lodash';
+import { Card, Deck } from '../../src/models';
 
 const { expect } = chai;
 
-describe("deck class methods", ()=> {
-  describe("assemble", () => {
-    it("generates a deck of cards with 44 members", () => {
+describe('deck class methods', () => {
+  describe('assemble', () => {
+    it('generates a deck of cards with 44 members', () => {
       const testDeck = new Deck();
       expect(testDeck.deck.length).to.equal(44);
     });
 
-    it("generates a deck with 11 cards for each of 4 suits", () => {
+    it('generates a deck with 11 cards for each of 4 suits', () => {
       const testDeck = new Deck();
 
       const groupBySuit: { [key: string]: number }  = testDeck.deck.reduce(
@@ -29,7 +28,7 @@ describe("deck class methods", ()=> {
       expect(arrayOfSuits).to.have.members(['Clubs','Diamonds','Hearts','Spades']);
     });
 
-    it("generates a deck with 4 (of different suits) cards for each number/face card", () => {
+    it('generates a deck with 4 (of different suits) cards for each number/face card', () => {
       const testDeck = new Deck();
 
       const groupByValue: { [key: string]: number }  = testDeck.deck.reduce(
@@ -46,8 +45,8 @@ describe("deck class methods", ()=> {
     });
   });
 
-  describe("shuffle", () => {
-    it("mixes up a deck of cards", () => {
+  describe('shuffle', () => {
+    it('mixes up a deck of cards', () => {
       const testDeck = new Deck();
       const beforeDeck = _.cloneDeep(testDeck);
       testDeck.shuffle();
@@ -55,8 +54,8 @@ describe("deck class methods", ()=> {
     });
   });
 
-  describe("dealOneCard", () => {
-    it("removes the final element from the deck", () => {
+  describe('dealOneCard', () => {
+    it('removes the final element from the deck', () => {
       const testDeck = new Deck();
       const dealtCard = testDeck.dealOneCard();
       const expectedCard = new Card('Spades', 13);

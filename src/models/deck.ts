@@ -3,9 +3,6 @@ import { Card } from './index';
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
 export class Deck {
-  static suits: string[] = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
-  static values: number[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-
   public deck: Card[];
 
   constructor() {
@@ -39,16 +36,13 @@ export class Deck {
     this.deck = [];
 
     // tslint:disable-next-line: forin
-    for (const suit in Deck.suits) {
-
+    for (const suit in Card.suits) {
       // tslint:disable-next-line: forin
-      for (const value in Deck.values) {
-        const card = new Card(Deck.suits[suit], Deck.values[value]);
+      for (const value in Card.values) {
+        const card = new Card(Card.suits[suit], Card.values[value]);
         this.deck.push(card);
       }
-
     }
-
     return this;
   }
 }
