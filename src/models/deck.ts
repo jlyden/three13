@@ -37,12 +37,17 @@ export class Deck {
 
     // tslint:disable-next-line: forin
     for (const suit in Card.suits) {
-      // tslint:disable-next-line: forin
-      for (const value in Card.values) {
-        const card = new Card(Card.suits[suit], Card.values[value]);
-        this.deck.push(card);
+      if (Card.suits[suit] !== 'Joker') {
+        // tslint:disable-next-line: forin
+        for (const value in Card.values) {
+          const card = new Card(Card.suits[suit], Card.values[value]);
+          this.deck.push(card);
+        }
       }
     }
+    // Add two Jokers, this is 313
+    this.deck.push(new Card('Joker', 3));
+    this.deck.push(new Card('Joker', 4));
     return this;
   }
 }

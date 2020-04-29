@@ -7,7 +7,7 @@ const { expect } = chai;
 
 // Setup
 const testHand = new Hand();
-const cardOne = new Card('Diamonds', 9);
+const cardOne = new Card('Diamonds', 13);
 const cardTwo = new Card('Spades', 4);
 const cardThree = new Card('Diamonds', 4);
 testHand.add(cardOne);
@@ -17,6 +17,23 @@ const handWithTwoCards = _.cloneDeep(testHand);
 testHand.add(cardThree);
 
 describe('hand class methods', () => {
+  describe('toString', () => {
+    it('returns the expected three card hand', () => {
+      const expected = '[<King of Diamonds>, <4 of Spades>, <4 of Diamonds>]';
+      expect(testHand.toString()).to.equal(expected);
+    })
+
+    it('returns the expected two card hand', () => {
+      const expected = '[<King of Diamonds>, <4 of Spades>]';
+      expect(handWithTwoCards.toString()).to.equal(expected);
+    })
+
+    it('returns the expected three card hand', () => {
+      const expected = '[<King of Diamonds>]';
+      expect(handWithOneCard.toString()).to.equal(expected);
+    })
+  })
+
   describe('discard', () => {
     it('removes a card and leaves two behind', () => {
       const discardThree = testHand.discard(cardThree);

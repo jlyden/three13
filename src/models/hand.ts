@@ -8,6 +8,22 @@ export class Hand {
     this.hand = [];
   }
 
+  // TODO: broken
+  public toString() {
+    let stringHand = '[';
+    if (this.hand.length > 0) {
+      // tslint:disable-next-line: forin
+      for (const card in this.hand) {
+        stringHand += `${this.hand[card].toString()}, `;
+      }
+    }
+    if (stringHand.slice(-2) === ', ') {
+      stringHand = stringHand.substring(0, stringHand.length -2);
+    }
+    stringHand += ']';
+    return stringHand;
+  }
+
   public add(card: Card) {
     this.hand.push(card);
   }
