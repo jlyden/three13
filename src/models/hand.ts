@@ -8,7 +8,6 @@ export class Hand {
     this.hand = [];
   }
 
-  // TODO: broken
   public toString() {
     let stringHand = '[';
     if (this.hand.length > 0) {
