@@ -3,7 +3,7 @@
 *Todo*
 Define round class including deal() and go_out()
 Define user class
-Define hand class including draw() and discard()
+Define hand class including draw() and discard() - done 
 
 Create game
  - need usernames to include
