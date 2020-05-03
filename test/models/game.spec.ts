@@ -5,31 +5,31 @@ const { expect } = chai;
 
 describe('game methods', () => {
   // Setup
-  const users = [new User(1, 'Sammy'), new User(2, 'Les')];
-  const game = new Game(1, users);
+  const testUsers = [new User(1, 'Sammy'), new User(2, 'Les')];
+  const testGame = new Game(1, testUsers);
   
   describe('constructor', () => {
     it('correctly assigns players and round', () => {
-      expect(game.players).to.deep.equal(users);
-      expect(game.round).to.equal(3);
+      expect(testGame.players).to.deep.equal(testUsers);
+      expect(testGame.round).to.equal(3);
     });
   });
 
   describe('goToNextRound', () => {
     it('correctly advances round if not round 13', () => {
-      game.goToNextRound();
-      expect(game.round).to.equal(4);
+      testGame.goToNextRound();
+      expect(testGame.round).to.equal(4);
     });
 
     it('does not advance round past round 13', () => {
       // Setup
-      while(game.round < 13){
-        game.goToNextRound();
+      while(testGame.round < 13){
+        testGame.goToNextRound();
       };
-      expect(game.round).to.equal(13);
+      expect(testGame.round).to.equal(13);
 
-      game.goToNextRound();
-      expect(game.round).to.equal(13);
+      testGame.goToNextRound();
+      expect(testGame.round).to.equal(13);
     });
   });
 });

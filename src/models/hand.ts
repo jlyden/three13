@@ -17,7 +17,7 @@ export class Hand {
       }
     }
     if (stringHand.slice(-2) === ', ') {
-      stringHand = stringHand.substring(0, stringHand.length -2);
+      stringHand = stringHand.substring(0, stringHand.length - 2);
     }
     stringHand += ']';
     return stringHand;

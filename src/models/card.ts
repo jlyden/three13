@@ -22,13 +22,17 @@ export class Card {
     }
     let cardValue: string;
     switch (this.value) {
-      case 11: cardValue = 'Jack';
+      case 11:
+        cardValue = 'Jack';
         break;
-      case 12: cardValue = 'Queen';
+      case 12:
+        cardValue = 'Queen';
         break;
-      case 13: cardValue = 'King';
+      case 13:
+        cardValue = 'King';
         break;
-      default: cardValue = this.value.toString();
+      default:
+        cardValue = this.value.toString();
         break;
     }
     return `<${cardValue} of ${this.suit}>`;

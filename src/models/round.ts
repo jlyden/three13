@@ -16,22 +16,22 @@ export class Round {
 
     this.hands = [];
     const userCount = this.game.players.length;
-    for (let i = 0; i < userCount; i ++){
+    for (let i = 0; i < userCount; i++) {
       this.hands.push(new Hand());
     }
   }
 
   public startRound() {
     this.deal();
-    this.setNextUp()
-    this.setMessage(`${this.nextUp.nickname}, time to draw and discard!`)
+    this.setNextUp();
+    this.setMessage(`${this.nextUp.nickname}, time to draw and discard!`);
   }
 
   public continueRound() {
     // do stuff
   }
 
-  public end() {
+  public endRound() {
     // if(turn), user can go_out() (includes discard action)
     // validate user's hand - if invalid, round continues
     // if valid, update us score & clear user's hand
@@ -49,9 +49,9 @@ export class Round {
     const userCount = this.game.players.length;
 
     // loop through cardCount
-    for (let i = 0; i < cardCount; i ++) {
+    for (let i = 0; i < cardCount; i++) {
       // loop through userCount
-      for (let j = 0; j < userCount; j ++) {
+      for (let j = 0; j < userCount; j++) {
         // pull card from deck, add it to hand
         this.hands[j].add(this.deck.dealOneCard());
       }
@@ -60,19 +60,17 @@ export class Round {
 
   /**
    * Rotate first player to draw based on round
+   * TODO: make private after testing - set up rewire
    */
-  private setNextUp() {
+  public setNextUp() {
     const userCount = this.game.players.length;
-    let nextUp = (this.game.round) % userCount;
-    // In 2 player game, we still want User 0 to go first
-    if(userCount < 3) {
-      nextUp = (this.game.round - 1) % userCount;
-    }
-    this.nextUp = this.game.players[nextUp];
+    const corrective = Math.abs(Game.startingRound - userCount);
+    const nextUpIndex = (this.game.round + corrective) % userCount;
+    this.nextUp = this.game.players[nextUpIndex];
   }
 
   private setMessage(message: string) {
-    if(this.message) {
+    if (this.message) {
       this.clearMessage();
     }
     this.message = message;

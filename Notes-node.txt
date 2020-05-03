@@ -28,7 +28,15 @@ End of round
  - after last user has discarded, start next round 
 
 
+Rewire for private method testing:
+//import rewire from 'rewire';
+//const round = rewire('../../src/models/round');
+    // https://www.npmjs.com/package/rewire
+//    const setNextUp = round.__get__('setNextUp');
+
+
 *Resources*
+https://github.com/ryym/mocha-each
 https://box.scotch.io/
 https://wsvincent.com/javascript-object-oriented-deck-cards/
 https://www.killerphp.com/tutorials/php-objects-page-1/
