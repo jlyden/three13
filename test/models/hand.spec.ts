@@ -1,5 +1,4 @@
 import chai from 'chai';
-import 'mocha';
 import _ from 'lodash';
 import { Card, Hand } from '../../src/models';
 
@@ -16,7 +15,7 @@ testHand.add(cardTwo);
 const handWithTwoCards = _.cloneDeep(testHand);
 testHand.add(cardThree);
 
-describe('hand class methods', () => {
+describe('hand methods', () => {
   describe('toString', () => {
     it('returns the expected three card hand', () => {
       const expected = '[<King of Diamonds>, <4 of Spades>, <4 of Diamonds>]';

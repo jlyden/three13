@@ -3,18 +3,17 @@ import { Card } from './index';
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
 export class Deck {
-  public deck: Card[];
+  public cards: Card[];
 
   constructor() {
-    this.deck = [];
     this.assemble();
   }
 
   public shuffle(): Deck {
-    const { deck } = this;
+    const { cards } = this;
 
     // Start with end of deck
-    let cardCountdown = deck.length;
+    let cardCountdown = cards.length;
     let cardToSwap: number;
 
     while (cardCountdown) {
@@ -22,18 +21,18 @@ export class Deck {
       cardToSwap = Math.floor(Math.random() * cardCountdown--);
 
       // and swap with value from end of deck
-      [deck[cardCountdown], deck[cardToSwap]] = [deck[cardToSwap], deck[cardCountdown]];
+      [cards[cardCountdown], cards[cardToSwap]] = [cards[cardToSwap], cards[cardCountdown]];
     }
 
     return this;
   }
 
   public dealOneCard() {
-    return this.deck.pop();
+    return this.cards.pop();
   }
 
   private assemble(): Deck {
-    this.deck = [];
+    this.cards = [];
 
     // tslint:disable-next-line: forin
     for (const suit in Card.suits) {
@@ -41,13 +40,13 @@ export class Deck {
         // tslint:disable-next-line: forin
         for (const value in Card.values) {
           const card = new Card(Card.suits[suit], Card.values[value]);
-          this.deck.push(card);
+          this.cards.push(card);
         }
       }
     }
     // Add two Jokers, this is 313
-    this.deck.push(new Card('Joker', 3));
-    this.deck.push(new Card('Joker', 4));
+    this.cards.push(new Card('Joker', 3));
+    this.cards.push(new Card('Joker', 4));
     return this;
   }
 }

@@ -1,19 +1,18 @@
 313 via node/express
 
 *Todo*
-Define round class including deal() and go_out()
-Define user class
+Define round class including deal() - done and go_out() - TODO
+Define user class - basic, done
 Define hand class including draw() and discard() - done 
 
 Create game
- - need usernames to include
- - order of usernames determines user_order
- - prep_deck()
- - insert rows in db 
+ - pass array of users to constructor - done
+ - order of users determines user_order - done
+ - insert rows in db - TODO
  
 Start round 
- - shuffle(), deal()
- - prompt user_one to draw and discard
+ - shuffle(), deal() - done
+ - prompt user_one to draw and discard - done
 
 During round
  - users prompted to draw/discard in order
