@@ -1,10 +1,11 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { Card, Hand } from '../../src/models';
+import { Card, Hand, User } from '../../src/models';
 
 const { expect } = chai;
 
 // Setup
+const testUser = new User(1, 'Alice');
 const testHand = new Hand();
 const cardOne = new Card('Diamonds', 13);
 const cardTwo = new Card('Spades', 4);

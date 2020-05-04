@@ -1,4 +1,4 @@
-import { Card } from './index';
+import { Card, User } from './index';
 import _ from 'lodash';
 
 export class Hand {

@@ -1,7 +1,7 @@
 import chai from 'chai';
 import forEach from 'mocha-each';
 import _ from 'lodash';
-import { Round, Game, User } from '../../src/models';
+import { Round, Game, User, Card } from '../../src/models';
 
 const { expect } = chai;
 
@@ -10,15 +10,14 @@ const userTwo = new User(2, 'Bert');
 const userThree = new User(3, 'Calvin');
 const userFour = new User(4, 'Dahlia');
 const userFive = new User(5, 'Edith');
+const userSix = new User(6, 'Fred');
 const twoPlayers = [userOne, userTwo];
 
 describe('round methods', () => {
   describe('startRound', () => {
-    // Setup
     const testGame = new Game(1, twoPlayers);
     const testRound = new Round(testGame);
-
-    it('correctly prepares the deck and hands', () => {
+      it('correctly prepares the deck and hands', () => {
       expect(testRound.hands.length).to.equal(2);
 
       // Deck and Users have correct card counts
@@ -28,16 +27,16 @@ describe('round methods', () => {
     });
 
     it('deals 3 unique cards to each of 2 users, removing those 6 cards from the deck', () => {
-      testRound.startRound(); // round 1, 3 cards
+      testRound.startRound();
 
       // Deck and Users have correct card counts
-      expect(testRound.deck.cards.length).to.equal(40);        
+      expect(testRound.deck.cards.length).to.equal(39);        
       const userCount = testGame.players.length;
       for (let i = 0; i < userCount; i ++) {
         expect(testRound.hands[i].hand.length).to.equal(3);
       }
 
-      // No intersections between deck and hands
+      // No intersections between deck, hands, and visible card
       // tslint doesn't recognize _.intersectionWith as a lodash function
       // tslint:disable-next-line: no-unused-expression
       expect(_.intersectionWith(testRound.hands[0].hand, testRound.hands[1].hand, _.isEqual)).to.be.empty;
@@ -45,12 +44,47 @@ describe('round methods', () => {
       expect(_.intersectionWith(testRound.hands[0].hand, testRound.deck.cards, _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
       expect(_.intersectionWith(testRound.hands[1].hand, testRound.deck.cards, _.isEqual)).to.be.empty;
+      // tslint:disable-next-line: no-unused-expression
+      expect(testRound.visibleCard).to.not.be.null;
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.findIndex(testRound.hands[0].hand, testRound.visibleCard)).to.equal(-1);
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.findIndex(testRound.hands[1].hand, testRound.visibleCard)).to.equal(-1);
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.findIndex(testRound.deck.cards, testRound.visibleCard)).to.equal(-1);
     });
 
     it('prompts the first user to play', () => {
-      expect(testRound.nextUp).to.deep.equal(twoPlayers[0]);
-      expect(testRound.message).to.equal('Alice, time to draw and discard!')
+      expect(testRound.currentPlayer).to.deep.equal(twoPlayers[0]);
+      expect(testRound.message).to.equal('Alice - time to draw')
     });
+  });
+
+  describe('takeVisibleCard', () => {
+    // Arrange
+    const testGame = new Game(1, twoPlayers);
+    const testRound = new Round(testGame);
+    testRound.startRound();
+    const visibleCard: Card = testRound.visibleCard;
+    const userHand = testRound.getCurrentUserIndex();
+
+    it('adds visibleCard to user hand, sets round.visibleCard to null', () => {
+      // Act
+      testRound.takeVisibleCard();
+
+      // Assert
+      expect(testRound.hands[userHand].toString()).to.include(visibleCard.toString());
+      // tslint:disable-next-line: no-unused-expression
+      expect(testRound.visibleCard).to.be.null;
+    })
+  });
+
+  describe('drawFromDeck', () => {
+    // TODO:
+  });
+
+  describe('discardAfterTurn', () => {
+    // TODO:
   });
 
   describe('setNextUp', () => {
@@ -59,9 +93,9 @@ describe('round methods', () => {
       const testGame2Players = new Game(1, twoPlayers);
       const testRound2Players = new Round(testGame2Players);
 
-      // Once we start a round, users[0] is set to nextUp
+      // Once we start a round, users[0] is set to currentPlayer
       testRound2Players.startRound();
-      expect(testRound2Players.nextUp).to.deep.equal(testRound2Players.game.players[0]);
+      expect(testRound2Players.currentPlayer).to.deep.equal(testRound2Players.game.players[0]);
 
       const testCases = [
         [1, 4],
@@ -79,8 +113,8 @@ describe('round methods', () => {
       forEach(testCases)
         .it('sets user %d to next up for round %d', (expected, round) => {
           testGame2Players.round = round;
-          testRound2Players.setNextUp();
-          expect(testRound2Players.nextUp).to.deep.equal(testRound2Players.game.players[expected]);
+          testRound2Players.setFirstPlayerForRound();
+          expect(testRound2Players.currentPlayer).to.deep.equal(testRound2Players.game.players[expected]);
         })
     });
 
@@ -90,9 +124,9 @@ describe('round methods', () => {
       const testGame3Players = new Game(1, threePlayers);
       const testRound3Players = new Round(testGame3Players);
 
-      // Once we start a round, users[0] is set to nextUp
+      // Once we start a round, users[0] is set to currentPlayer
       testRound3Players.startRound();
-      expect(testRound3Players.nextUp).to.deep.equal(testRound3Players.game.players[0]);
+      expect(testRound3Players.currentPlayer).to.deep.equal(testRound3Players.game.players[0]);
 
       const testCases = [
         [1, 4],
@@ -110,8 +144,8 @@ describe('round methods', () => {
       forEach(testCases)
         .it('sets user %d to next up for round %d', (expected, round) => {
           testGame3Players.round = round;
-          testRound3Players.setNextUp();
-          expect(testRound3Players.nextUp).to.deep.equal(testRound3Players.game.players[expected]);
+          testRound3Players.setFirstPlayerForRound();
+          expect(testRound3Players.currentPlayer).to.deep.equal(testRound3Players.game.players[expected]);
         })
     });
  
@@ -121,9 +155,9 @@ describe('round methods', () => {
       const testGame4Players = new Game(1, fourPlayers);
       const testRound4Players = new Round(testGame4Players);
 
-      // Once we start a round, users[0] is set to nextUp
+      // Once we start a round, users[0] is set to currentPlayer
       testRound4Players.startRound();
-      expect(testRound4Players.nextUp).to.deep.equal(testRound4Players.game.players[0]);
+      expect(testRound4Players.currentPlayer).to.deep.equal(testRound4Players.game.players[0]);
 
       const testCases = [
         [1, 4],
@@ -141,8 +175,8 @@ describe('round methods', () => {
       forEach(testCases)
         .it('sets user %d to next up for round %d', (expected, round) => {
           testGame4Players.round = round;
-          testRound4Players.setNextUp();
-          expect(testRound4Players.nextUp).to.deep.equal(testRound4Players.game.players[expected]);
+          testRound4Players.setFirstPlayerForRound();
+          expect(testRound4Players.currentPlayer).to.deep.equal(testRound4Players.game.players[expected]);
         })
     });
 
@@ -152,9 +186,9 @@ describe('round methods', () => {
       const testGame5Players = new Game(1, fivePlayers);
       const testRound5Players = new Round(testGame5Players);
 
-      // Once we start a round, users[0] is set to nextUp
+      // Once we start a round, users[0] is set to currentPlayer
       testRound5Players.startRound();
-      expect(testRound5Players.nextUp).to.equal(testRound5Players.game.players[0]);
+      expect(testRound5Players.currentPlayer).to.equal(testRound5Players.game.players[0]);
 
       const testCases = [
         [1, 4],
@@ -172,8 +206,39 @@ describe('round methods', () => {
       forEach(testCases)
         .it('sets user %d to next up for round %d', (expected, round) => {
           testGame5Players.round = round;
-          testRound5Players.setNextUp();
-          expect(testRound5Players.nextUp).to.equal(testRound5Players.game.players[expected]);
+          testRound5Players.setFirstPlayerForRound();
+          expect(testRound5Players.currentPlayer).to.equal(testRound5Players.game.players[expected]);
+        });
+    });
+
+    describe('6 player game', () => {
+      // Setup
+      const sixPlayers = [userOne, userTwo, userThree, userFour, userFive, userSix];
+      const testGame6Players = new Game(1, sixPlayers);
+      const testRound6Players = new Round(testGame6Players);
+
+      // Once we start a round, users[0] is set to currentPlayer
+      testRound6Players.startRound();
+      expect(testRound6Players.currentPlayer).to.equal(testRound6Players.game.players[0]);
+
+      const testCases = [
+        [1, 4],
+        [2, 5],
+        [3, 6],
+        [4, 7],
+        [5, 8],
+        [0, 9],
+        [1, 10],
+        [2, 11],
+        [3, 12],
+        [4, 13]
+      ];
+
+      forEach(testCases)
+        .it('sets user %d to next up for round %d', (expected, round) => {
+          testGame6Players.round = round;
+          testRound6Players.setFirstPlayerForRound();
+          expect(testRound6Players.currentPlayer).to.equal(testRound6Players.game.players[expected]);
         });
     });
   });
