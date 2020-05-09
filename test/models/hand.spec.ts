@@ -35,6 +35,12 @@ describe('hand methods', () => {
   })
 
   describe('discard', () => {
+    it('throws error when trying to remove a card not in hand', () => {
+      const badDiscard = new Card('Spades', 5);
+      const expectedError = 'Attempted discard <5 of Spades> not in hand.';
+      expect(testHand.discard.bind(testHand, badDiscard)).to.throw(expectedError);
+      })
+
     it('removes a card and leaves two behind', () => {
       const discardThree = testHand.discard(cardThree);
       expect(testHand).to.deep.equal(handWithTwoCards);

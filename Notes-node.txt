@@ -47,3 +47,55 @@ https://codinginfinite.com/getting-started-web-application-php-mysql-tutorials/
 https://www.taniarascia.com/create-a-simple-database-app-connecting-to-mysql-with-php/
 https://catswhocode.com/phpcache/
 https://www.web-development-blog.com/why-should-you-cache-your-php-website/
+
+
+------------------------------------------------------------------
+Logic for checking gin rummy hand from https://github.com/jlyden/straight-gin/blob/master/utils.py#L60
+
+def test_hand(hand):
+    """
+    Calculate deadwood penalty of Straight_Gin hand
+    hand: list of strings
+    Return integer penalty of unplayable ("deadwood") cards in hand
+    Resources consulted:
+    http://stackoverflow.com/questions/7352684/how-to-find-the-groups-of-consecutive-elements-from-an-array-in-numpy
+    https://docs.python.org/2/library/itertools.html#itertools.groupby
+    http://stackoverflow.com/questions/1450111/delete-many-elements-of-list-python
+    http://stackoverflow.com/questions/7025581/how-can-i-group-equivalent-items-together-in-a-python-list
+    """
+    suits = clean_hand(hand)
+
+    # set up variables
+    long_runs = []
+    leftovers = []
+
+    # look for runs within each suit
+    for suit in suits:
+        suit.sort()
+        # if at least 3 cards in suit, test for a run
+        if len(suit) > 2:
+            groups = group_consecutives(suit)
+            for group in groups:
+                # if group is run of at least 3 different numbers
+                if len(group) > 2 and group[0] != group[-1]:
+                    # store long_runs to help with sets later
+                    if len(group) > 3:
+                        long_runs.append(group)
+                    # remove cards used in run from suit
+                    suit[:] = [item for i, item in enumerate(suit)
+                               if item not in group]
+            # after removing from suit all cards in run-groups,
+            # dump remaining cards in suit to leftovers
+            leftovers += suit
+        # if too few cards in suit for a run, add cards in suit to leftovers
+        else:
+            leftovers += suit
+
+    # check leftovers for sets of duplicate numbers
+    leftovers, long_runs = check_sets(leftovers, long_runs)
+    # (twice in case of buried last cards)
+    leftovers, long_runs = check_sets(leftovers, long_runs)
+
+    # calculate penalty (face card pts != 10)
+    penalty = sum(leftovers)
+    return penalty

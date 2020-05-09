@@ -13,7 +13,7 @@ export class Game {
     if (players.length > 1 && players.length < 7) {
       this.players = players;
     } else {
-      throw new RangeError('Players[] must have 2-6 members.')
+      throw new RangeError('Players[] must have 2-6 members.');
     }
     this.round = Game.startingRound;
   }

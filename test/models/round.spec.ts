@@ -12,8 +12,114 @@ const userFour = new User(4, 'Dahlia');
 const userFive = new User(5, 'Edith');
 const userSix = new User(6, 'Fred');
 const twoPlayers = [userOne, userTwo];
+const threePlayers = [userOne, userTwo, userThree];
 
 describe('round methods', () => {
+  describe('play through a round', () => {
+    const progressiveGame = new Game(1, threePlayers);
+    const progGameRoundOne = new Round(progressiveGame);
+    progGameRoundOne.startRound();
+
+    it('takes Visible Card: adds to hand, sets visibleCard to null - Player 0', () => {
+      // Arrange
+      const visibleCard: Card = progGameRoundOne.visibleCard;
+      const handIndex = progGameRoundOne.getCurrentPlayerIndex();
+      const handCountBefore = progGameRoundOne.hands[handIndex].hand.length;
+
+      // Act
+      progGameRoundOne.takeVisibleCard();
+
+      // Assert
+      // Expected user
+      expect(handIndex).to.equal(0);
+      expect(progGameRoundOne.currentPlayer).to.deep.equal(threePlayers[0]);
+      expect(progGameRoundOne.message).to.equal('Alice - time to discard')
+
+      // Expected card actions
+//      expect(progGameRoundOne.hands[handIndex].toString()).to.include(visibleCard.toString());
+      expect(progGameRoundOne.hands[handIndex].hand.length).to.equal(handCountBefore+1)
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].hand, 
+        [visibleCard], _.isEqual)).to.deep.equal([visibleCard]);
+      // tslint:disable-next-line: no-unused-expression
+      expect(progGameRoundOne.visibleCard).to.be.null;
+    })
+
+    it('discards After Turn - Player 0', () => {
+      // Arrange
+      const handIndex = progGameRoundOne.getCurrentPlayerIndex();
+      const discard = progGameRoundOne.hands[handIndex].hand[0];
+      const handCountBefore = progGameRoundOne.hands[handIndex].hand.length;
+  
+      // Act
+      progGameRoundOne.discardAfterTurn(discard);
+
+      // Assert
+      expect(progGameRoundOne.hands[handIndex].hand.length).to.equal(handCountBefore-1)
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].hand, 
+        [discard], _.isEqual)).to.be.empty;
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.intersectionWith(progGameRoundOne.deck.cards, [discard], _.isEqual)).to.be.empty;
+      // tslint:disable-next-line: no-unused-expression
+      expect(progGameRoundOne.visibleCard).to.deep.equal(discard);
+
+      // Next user should be current now, check message
+      expect(progGameRoundOne.currentPlayer).to.deep.equal(threePlayers[1]);
+      expect(progGameRoundOne.message).to.equal('Bert - time to draw')
+    });
+  
+    it('draws From Deck: and adds card to hand - Player 1', () => {
+      // Arrange
+      const beforeDeckCount = progGameRoundOne.deck.cards.length;
+      const userHandIndex = progGameRoundOne.getCurrentPlayerIndex();
+      const beforeUserHandCount = progGameRoundOne.hands[userHandIndex].hand.length;
+      // User needs to draw
+      
+      // Act
+      progGameRoundOne.drawFromDeck();
+
+      // Assert
+      // Expected user
+      expect(userHandIndex).to.equal(1);
+      expect(progGameRoundOne.currentPlayer).to.deep.equal(threePlayers[1]);
+      expect(progGameRoundOne.message).to.equal('Bert - time to discard')
+
+      // Expected card actions
+      expect(progGameRoundOne.deck.cards.length).to.equal(beforeDeckCount-1);
+      expect(progGameRoundOne.hands[userHandIndex].hand.length).to.equal(beforeUserHandCount+1);
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.intersectionWith(progGameRoundOne.hands[userHandIndex].hand, progGameRoundOne.deck.cards, _.isEqual)).to.be.empty;
+    })
+
+    it('discards After Turn - Player 1', () => {
+      // Arrange
+      const handIndex = progGameRoundOne.getCurrentPlayerIndex();
+      const discard = progGameRoundOne.hands[handIndex].hand[1];
+      const handCountBefore = progGameRoundOne.hands[handIndex].hand.length;
+  
+      // Act
+      progGameRoundOne.discardAfterTurn(discard);
+
+      // Assert
+      expect(progGameRoundOne.hands[handIndex].hand.length).to.equal(handCountBefore-1)
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].hand, 
+        [discard], _.isEqual)).to.be.empty;
+      // tslint:disable-next-line: no-unused-expression
+      expect(_.intersectionWith(progGameRoundOne.deck.cards, [discard], _.isEqual)).to.be.empty;
+      // tslint:disable-next-line: no-unused-expression
+      expect(progGameRoundOne.visibleCard).to.deep.equal(discard);
+
+      // Next user should be current now, check message
+      expect(progGameRoundOne.currentPlayer).to.deep.equal(threePlayers[2]);
+      expect(progGameRoundOne.message).to.equal('Calvin - time to draw')
+    });  
+  });
+
+
+
+
   describe('startRound', () => {
     const testGame = new Game(1, twoPlayers);
     const testRound = new Round(testGame);
@@ -58,33 +164,6 @@ describe('round methods', () => {
       expect(testRound.currentPlayer).to.deep.equal(twoPlayers[0]);
       expect(testRound.message).to.equal('Alice - time to draw')
     });
-  });
-
-  describe('takeVisibleCard', () => {
-    // Arrange
-    const testGame = new Game(1, twoPlayers);
-    const testRound = new Round(testGame);
-    testRound.startRound();
-    const visibleCard: Card = testRound.visibleCard;
-    const userHand = testRound.getCurrentUserIndex();
-
-    it('adds visibleCard to user hand, sets round.visibleCard to null', () => {
-      // Act
-      testRound.takeVisibleCard();
-
-      // Assert
-      expect(testRound.hands[userHand].toString()).to.include(visibleCard.toString());
-      // tslint:disable-next-line: no-unused-expression
-      expect(testRound.visibleCard).to.be.null;
-    })
-  });
-
-  describe('drawFromDeck', () => {
-    // TODO:
-  });
-
-  describe('discardAfterTurn', () => {
-    // TODO:
   });
 
   describe('setNextUp', () => {

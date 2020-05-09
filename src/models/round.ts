@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { drawMessage, discardMessage } from '../constants/messages';
+import { drawMessage, discardMessage, invalidDiscardMessage } from '../constants/messages';
 import { Deck, Hand, Game, User } from './index';
 import { Card } from './card';
 
@@ -28,13 +28,12 @@ export class Round {
     this.deal();
     this.visibleCard = this.deck.dealOneCard();
     this.setFirstPlayerForRound();
-    this.setMessage(this.currentPlayer.nickname + drawMessage);
   }
 
   // NOTE: User button - 'Take Visible Card'
   public takeVisibleCard() {
     // Get current user's hand and add visibleCard to it
-    const handIndex = this.getCurrentUserIndex();
+    const handIndex = this.getCurrentPlayerIndex();
     this.hands[handIndex].add(this.visibleCard);
 
     this.visibleCard = null;
@@ -44,23 +43,31 @@ export class Round {
   // NOTE: User button - 'Draw from Deck'
   public drawFromDeck() {
     // Get current user's hand and add card from deck to it
-    const handIndex = this.getCurrentUserIndex();
+    const handIndex = this.getCurrentPlayerIndex();
     this.hands[handIndex].add(this.deck.dealOneCard());
 
+    // Remind user to discard
     this.setMessage(this.currentPlayer.nickname + discardMessage);
   }
 
+  // NOTE: User needs to communicate discard
   public discardAfterTurn(card: Card) {
     // Get current user's hand
-    const handIndex = this.getCurrentUserIndex();
-
+    const handIndex = this.getCurrentPlayerIndex();
     // Remove specified card and set it to visibleCard
-    this.visibleCard = this.hands[handIndex].discard(card);
+    try {
+      this.visibleCard = this.hands[handIndex].discard(card);
+    } catch (error) {
+      this.setMessage(invalidDiscardMessage);
+    }
+
+    // Set up for next player turn
+    this.setNextCurrentPlayer();
   }
 
-  // NOTE: User button - 'Go Out'
-  public endRound() {
-    // if(nextUp), user can go_out() (includes discard action)
+  // NOTE: User needs to communicate discard and intention to 'Go out'
+  public endRound(card: Card) {
+    // set aside discard (but save in case hand is invalid)
     // validate user's hand - if invalid, round continues
     // if valid, update us score & clear user's hand
     // set end_of_round = true: all other users get only one more turn
@@ -95,9 +102,17 @@ export class Round {
     const corrective = Math.abs(Game.startingRound - userCount);
     const currentPlayerIndex = (this.game.round + corrective) % userCount;
     this.currentPlayer = this.game.players[currentPlayerIndex];
+    this.setMessage(this.currentPlayer.nickname + drawMessage);
   }
 
-  public getCurrentUserIndex(): number {
+  private setNextCurrentPlayer() {
+    const currentPlayerIndex = this.getCurrentPlayerIndex();
+    // Set next player to current and update message message
+    this.currentPlayer = this.game.players[currentPlayerIndex + 1];
+    this.setMessage(this.currentPlayer.nickname + drawMessage);
+  }
+
+  public getCurrentPlayerIndex(): number {
     return _.findIndex(this.game.players, this.currentPlayer);
   }
 
