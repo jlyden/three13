@@ -24,7 +24,7 @@ describe('round methods', () => {
       // Arrange
       const visibleCard: Card = progGameRoundOne.visibleCard;
       const handIndex = progGameRoundOne.getCurrentPlayerIndex();
-      const handCountBefore = progGameRoundOne.hands[handIndex].hand.length;
+      const handCountBefore = progGameRoundOne.hands[handIndex].getCards().length;
 
       // Act
       progGameRoundOne.takeVisibleCard();
@@ -37,30 +37,30 @@ describe('round methods', () => {
 
       // Expected card actions
 //      expect(progGameRoundOne.hands[handIndex].toString()).to.include(visibleCard.toString());
-      expect(progGameRoundOne.hands[handIndex].hand.length).to.equal(handCountBefore+1)
+      expect(progGameRoundOne.hands[handIndex].getCards().length).to.equal(handCountBefore+1)
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].hand, 
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(), 
         [visibleCard], _.isEqual)).to.deep.equal([visibleCard]);
       // tslint:disable-next-line: no-unused-expression
       expect(progGameRoundOne.visibleCard).to.be.null;
-    })
+    });
 
     it('discards After Turn - Player 0', () => {
       // Arrange
       const handIndex = progGameRoundOne.getCurrentPlayerIndex();
-      const discard = progGameRoundOne.hands[handIndex].hand[0];
-      const handCountBefore = progGameRoundOne.hands[handIndex].hand.length;
+      const discard = progGameRoundOne.hands[handIndex].getCards()[0];
+      const handCountBefore = progGameRoundOne.hands[handIndex].getCards().length;
   
       // Act
       progGameRoundOne.discardAfterTurn(discard);
 
       // Assert
-      expect(progGameRoundOne.hands[handIndex].hand.length).to.equal(handCountBefore-1)
+      expect(progGameRoundOne.hands[handIndex].getCards().length).to.equal(handCountBefore-1)
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].hand, 
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(), 
         [discard], _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.deck.cards, [discard], _.isEqual)).to.be.empty;
+      expect(_.intersectionWith(progGameRoundOne.deck.getCards(), [discard], _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
       expect(progGameRoundOne.visibleCard).to.deep.equal(discard);
 
@@ -71,9 +71,9 @@ describe('round methods', () => {
   
     it('draws From Deck: and adds card to hand - Player 1', () => {
       // Arrange
-      const beforeDeckCount = progGameRoundOne.deck.cards.length;
+      const beforeDeckCount = progGameRoundOne.deck.getCards().length;
       const userHandIndex = progGameRoundOne.getCurrentPlayerIndex();
-      const beforeUserHandCount = progGameRoundOne.hands[userHandIndex].hand.length;
+      const beforeUserHandCount = progGameRoundOne.hands[userHandIndex].getCards().length;
       // User needs to draw
       
       // Act
@@ -86,28 +86,28 @@ describe('round methods', () => {
       expect(progGameRoundOne.message).to.equal('Bert - time to discard')
 
       // Expected card actions
-      expect(progGameRoundOne.deck.cards.length).to.equal(beforeDeckCount-1);
-      expect(progGameRoundOne.hands[userHandIndex].hand.length).to.equal(beforeUserHandCount+1);
+      expect(progGameRoundOne.deck.getCards().length).to.equal(beforeDeckCount-1);
+      expect(progGameRoundOne.hands[userHandIndex].getCards().length).to.equal(beforeUserHandCount+1);
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.hands[userHandIndex].hand, progGameRoundOne.deck.cards, _.isEqual)).to.be.empty;
-    })
+      expect(_.intersectionWith(progGameRoundOne.hands[userHandIndex].getCards(), progGameRoundOne.deck.getCards(), _.isEqual)).to.be.empty;
+    });
 
     it('discards After Turn - Player 1', () => {
       // Arrange
       const handIndex = progGameRoundOne.getCurrentPlayerIndex();
-      const discard = progGameRoundOne.hands[handIndex].hand[1];
-      const handCountBefore = progGameRoundOne.hands[handIndex].hand.length;
+      const discard = progGameRoundOne.hands[handIndex].getCards()[1];
+      const handCountBefore = progGameRoundOne.hands[handIndex].getCards().length;
   
       // Act
       progGameRoundOne.discardAfterTurn(discard);
 
       // Assert
-      expect(progGameRoundOne.hands[handIndex].hand.length).to.equal(handCountBefore-1)
+      expect(progGameRoundOne.hands[handIndex].getCards().length).to.equal(handCountBefore-1)
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].hand, 
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(), 
         [discard], _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.deck.cards, [discard], _.isEqual)).to.be.empty;
+      expect(_.intersectionWith(progGameRoundOne.deck.getCards(), [discard], _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
       expect(progGameRoundOne.visibleCard).to.deep.equal(discard);
 
@@ -117,9 +117,6 @@ describe('round methods', () => {
     });  
   });
 
-
-
-
   describe('startRound', () => {
     const testGame = new Game(1, twoPlayers);
     const testRound = new Round(testGame);
@@ -127,37 +124,37 @@ describe('round methods', () => {
       expect(testRound.hands.length).to.equal(2);
 
       // Deck and Users have correct card counts
-      expect(testRound.deck.cards.length).to.equal(46);
-      expect(testRound.hands[0].hand.length).to.equal(0);
-      expect(testRound.hands[1].hand.length).to.equal(0);
+      expect(testRound.deck.getCards().length).to.equal(46);
+      expect(testRound.hands[0].getCards().length).to.equal(0);
+      expect(testRound.hands[1].getCards().length).to.equal(0);
     });
 
     it('deals 3 unique cards to each of 2 users, removing those 6 cards from the deck', () => {
       testRound.startRound();
 
       // Deck and Users have correct card counts
-      expect(testRound.deck.cards.length).to.equal(39);        
+      expect(testRound.deck.getCards().length).to.equal(39);        
       const userCount = testGame.players.length;
       for (let i = 0; i < userCount; i ++) {
-        expect(testRound.hands[i].hand.length).to.equal(3);
+        expect(testRound.hands[i].getCards().length).to.equal(3);
       }
 
       // No intersections between deck, hands, and visible card
       // tslint doesn't recognize _.intersectionWith as a lodash function
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(testRound.hands[0].hand, testRound.hands[1].hand, _.isEqual)).to.be.empty;
+      expect(_.intersectionWith(testRound.hands[0].getCards(), testRound.hands[1].getCards(), _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(testRound.hands[0].hand, testRound.deck.cards, _.isEqual)).to.be.empty;
+      expect(_.intersectionWith(testRound.hands[0].getCards(), testRound.deck.getCards(), _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(testRound.hands[1].hand, testRound.deck.cards, _.isEqual)).to.be.empty;
+      expect(_.intersectionWith(testRound.hands[1].getCards(), testRound.deck.getCards(), _.isEqual)).to.be.empty;
       // tslint:disable-next-line: no-unused-expression
       expect(testRound.visibleCard).to.not.be.null;
       // tslint:disable-next-line: no-unused-expression
-      expect(_.findIndex(testRound.hands[0].hand, testRound.visibleCard)).to.equal(-1);
+      expect(_.findIndex(testRound.hands[0].getCards(), testRound.visibleCard)).to.equal(-1);
       // tslint:disable-next-line: no-unused-expression
-      expect(_.findIndex(testRound.hands[1].hand, testRound.visibleCard)).to.equal(-1);
+      expect(_.findIndex(testRound.hands[1].getCards(), testRound.visibleCard)).to.equal(-1);
       // tslint:disable-next-line: no-unused-expression
-      expect(_.findIndex(testRound.deck.cards, testRound.visibleCard)).to.equal(-1);
+      expect(_.findIndex(testRound.deck.getCards(), testRound.visibleCard)).to.equal(-1);
     });
 
     it('prompts the first user to play', () => {
@@ -194,7 +191,7 @@ describe('round methods', () => {
           testGame2Players.round = round;
           testRound2Players.setFirstPlayerForRound();
           expect(testRound2Players.currentPlayer).to.deep.equal(testRound2Players.game.players[expected]);
-        })
+        });
     });
 
     describe('3 player game', () => {
@@ -225,7 +222,7 @@ describe('round methods', () => {
           testGame3Players.round = round;
           testRound3Players.setFirstPlayerForRound();
           expect(testRound3Players.currentPlayer).to.deep.equal(testRound3Players.game.players[expected]);
-        })
+        });
     });
  
     describe('4 player game', () => {
@@ -256,7 +253,7 @@ describe('round methods', () => {
           testGame4Players.round = round;
           testRound4Players.setFirstPlayerForRound();
           expect(testRound4Players.currentPlayer).to.deep.equal(testRound4Players.game.players[expected]);
-        })
+        });
     });
 
     describe('5 player game', () => {

@@ -50,13 +50,13 @@ export class Round {
     this.setMessage(this.currentPlayer.nickname + discardMessage);
   }
 
-  // NOTE: User needs to communicate discard
+  // NOTE: User needs to communicate discard card
   public discardAfterTurn(card: Card) {
     // Get current user's hand
     const handIndex = this.getCurrentPlayerIndex();
     // Remove specified card and set it to visibleCard
     try {
-      this.visibleCard = this.hands[handIndex].discard(card);
+      this.visibleCard = this.hands[handIndex].remove(card);
     } catch (error) {
       this.setMessage(invalidDiscardMessage);
     }
@@ -68,7 +68,7 @@ export class Round {
   // NOTE: User needs to communicate discard and intention to 'Go out'
   public endRound(card: Card) {
     // set aside discard (but save in case hand is invalid)
-    // validate user's hand - if invalid, round continues
+    // evaluate user's hand - if invalid, round continues
     // if valid, update us score & clear user's hand
     // set end_of_round = true: all other users get only one more turn
     // after each discard(), evaluate each of their hands and calculate score

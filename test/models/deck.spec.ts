@@ -9,17 +9,17 @@ describe('deck methods', () => {
     const testDeck = new Deck();
 
     it('generates a deck of cards with 46 members', () => {
-      expect(testDeck.cards.length).to.equal(46);
+      expect(testDeck.getCards().length).to.equal(46);
     });
 
     it('generates a deck with 11 cards for each of 4 suits, plus 2 Jokers', () => {
-      const groupBySuit: { [key: string]: number }  = testDeck.cards.reduce(
+      const reduceBySuit: { [key: string]: number }  = testDeck.getCards().reduce(
         (tally: { [key: string]: number }, card: Card) => {
         tally[card.suit] = tally[card.suit] + 1 || 1;
         return tally;
       }, {});
-      const arrayOfSuitCounts: number[] = Object.values(groupBySuit);
-      const arrayOfSuits: string[] = Object.keys(groupBySuit);
+      const arrayOfSuitCounts: number[] = Object.values(reduceBySuit);
+      const arrayOfSuits: string[] = Object.keys(reduceBySuit);
 
       expect(arrayOfSuitCounts.length).to.equal(5);
       expect(arrayOfSuits).to.have.members(['Clubs','Diamonds','Hearts','Spades','Joker']);
@@ -27,14 +27,14 @@ describe('deck methods', () => {
     });
 
     it('generates a deck with 4 (of different suits) cards for each number/face card plus 2 Jokers', () => {
-      const groupByValue: { [key: string]: number }  = testDeck.cards.reduce(
+      const reduceByValue: { [key: string]: number }  = testDeck.getCards().reduce(
         (tally: { [key: string]: number }, card: Card) => {
         tally[card.value] = tally[card.value] + 1 || 1;
         return tally;
       }, {});
 
-      const arrayOfValueCounts: number[] = Object.values(groupByValue);
-      const arrayOfValues: string[] = Object.keys(groupByValue);
+      const arrayOfValueCounts: number[] = Object.values(reduceByValue);
+      const arrayOfValues: string[] = Object.keys(reduceByValue);
       expect(arrayOfValueCounts.length).to.equal(11);
       // Because of how we handle Jokers, there are 5 '3' and 5 '4' cards
       expect(arrayOfValueCounts).to.deep.equal([5,5,4,4,4,4,4,4,4,4,4]);
@@ -57,22 +57,22 @@ describe('deck methods', () => {
     it('removes the final element from the deck - Joker', () => {
       const dealtCardOne = testDeck.dealOneCard();
       const expectedCardOne = new Card('Joker', 4);
-      expect(testDeck.cards.length).to.equal(45);
+      expect(testDeck.getCards().length).to.equal(45);
       expect(dealtCardOne).to.deep.equal(expectedCardOne);
     });
 
     it('remove element -2 from deck', () => {
       const dealtCardTwo = testDeck.dealOneCard();
       const expectedCardTwo = new Card('Joker', 3);
-      expect(testDeck.cards.length).to.equal(44);
+      expect(testDeck.getCards().length).to.equal(44);
       expect(dealtCardTwo).to.deep.equal(expectedCardTwo);
     });
 
     it('remove element -3 from deck', () => {
       const dealtCardThree = testDeck.dealOneCard();
       const expectedCardThree = new Card('Spades', 13);
-      expect(testDeck.cards.length).to.equal(43);
+      expect(testDeck.getCards().length).to.equal(43);
       expect(dealtCardThree).to.deep.equal(expectedCardThree);
     });
   });
-})
+});

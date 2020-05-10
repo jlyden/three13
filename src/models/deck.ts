@@ -3,10 +3,14 @@ import { Card } from './index';
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
 export class Deck {
-  public cards: Card[];
+  private cards: Card[];
 
   constructor() {
     this.assemble();
+  }
+
+  public getCards(): Card[] {
+    return this.cards;
   }
 
   public shuffle(): Deck {
