@@ -13,32 +13,34 @@ describe('deck methods', () => {
     });
 
     it('generates a deck with 11 cards for each of 4 suits, plus 2 Jokers', () => {
-      const reduceBySuit: { [key: string]: number }  = testDeck.getCards().reduce(
-        (tally: { [key: string]: number }, card: Card) => {
-        tally[card.suit] = tally[card.suit] + 1 || 1;
-        return tally;
-      }, {});
+      const reduceBySuit: { [key: string]: number } = testDeck
+        .getCards()
+        .reduce((tally: { [key: string]: number }, card: Card) => {
+          tally[card.suit] = tally[card.suit] + 1 || 1;
+          return tally;
+        }, {});
       const arrayOfSuitCounts: number[] = Object.values(reduceBySuit);
       const arrayOfSuits: string[] = Object.keys(reduceBySuit);
 
       expect(arrayOfSuitCounts.length).to.equal(5);
-      expect(arrayOfSuits).to.have.members(['Clubs','Diamonds','Hearts','Spades','Joker']);
-      expect(arrayOfSuitCounts).to.deep.equal([11,11,11,11,2]);
+      expect(arrayOfSuits).to.have.members(['Clubs', 'Diamonds', 'Hearts', 'Spades', 'Joker']);
+      expect(arrayOfSuitCounts).to.deep.equal([11, 11, 11, 11, 2]);
     });
 
     it('generates a deck with 4 (of different suits) cards for each number/face card plus 2 Jokers', () => {
-      const reduceByValue: { [key: string]: number }  = testDeck.getCards().reduce(
-        (tally: { [key: string]: number }, card: Card) => {
-        tally[card.value] = tally[card.value] + 1 || 1;
-        return tally;
-      }, {});
+      const reduceByValue: { [key: string]: number } = testDeck
+        .getCards()
+        .reduce((tally: { [key: string]: number }, card: Card) => {
+          tally[card.value] = tally[card.value] + 1 || 1;
+          return tally;
+        }, {});
 
       const arrayOfValueCounts: number[] = Object.values(reduceByValue);
       const arrayOfValues: string[] = Object.keys(reduceByValue);
       expect(arrayOfValueCounts.length).to.equal(11);
       // Because of how we handle Jokers, there are 5 '3' and 5 '4' cards
-      expect(arrayOfValueCounts).to.deep.equal([5,5,4,4,4,4,4,4,4,4,4]);
-      expect(arrayOfValues).to.have.members(['3','4','5','6','7','8','9','10','11','12','13']);
+      expect(arrayOfValueCounts).to.deep.equal([5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4]);
+      expect(arrayOfValues).to.have.members(['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']);
     });
   });
 

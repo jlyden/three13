@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { drawMessage, discardMessage, invalidDiscardMessage } from '../constants/messages';
-import { Deck, Hand, Game, User } from './index';
+import { Deck, Hand, Game, User } from '../models';
 import { Card } from './card';
 
 export class Round {

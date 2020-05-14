@@ -29,6 +29,7 @@
     "mocha": "^7.1.1",
     "mocha-each": "^2.0.1",
     "nodemon": "^2.0.3",
+    "nyc": "^15.0.1",
     "prettier": "^2.0.5",
     "rewire": "^5.0.0",
     "ts-node": "^8.9.0",
@@ -38,8 +39,8 @@
   "scripts": {
     "start": "node .",
     "build": "tsc",
-    "test": "mocha -c -r ts-node/register test/**/** --reporter spec",
-    "format": "prettier --write \"src/**/*.ts\" \"dist/**/*.js\"",
+    "test": "nyc mocha -c -r ts-node/register test/**/** --reporter spec",
+    "format": "prettier --write \"src/**/*.ts\" \"dist/**/*.js\" \"test/**/*.ts\"",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix"
   },
   "repository": {

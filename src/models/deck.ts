@@ -1,4 +1,4 @@
-import { Card } from './index';
+import { Card } from '../models';
 
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 

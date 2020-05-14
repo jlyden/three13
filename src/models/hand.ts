@@ -1,4 +1,5 @@
-import { Card, User } from './index';
+import { Card } from '../models';
+import { transformRunArrayIntoCardArray, sortValuesIntoRuns } from '../utils';
 import _ from 'lodash';
 
 export class Hand {
@@ -8,15 +9,17 @@ export class Hand {
   private cards: Card[];
 
   // Variables for evaluating the hand at end of game
-  private wildCardCount: number;
   private processedCards: Card[][];
   private longRuns: Card[][];
   private leftovers: Card[];
 
-  constructor() {
-    this.cards = [];
+  constructor(cardsToAdd?: Card[]) {
+    if (cardsToAdd) {
+      this.cards = cardsToAdd;
+    } else {
+      this.cards = [];
+    }
 
-    this.wildCardCount = 0;
     this.processedCards = [];
     this.longRuns = [];
     this.leftovers = [];
@@ -24,6 +27,18 @@ export class Hand {
 
   public getCards(): Card[] {
     return this.cards;
+  }
+
+  public getProcessedCards(): Card[][] {
+    return this.processedCards;
+  }
+
+  public getLongRuns(): Card[][] {
+    return this.longRuns;
+  }
+
+  public getLeftovers(): Card[] {
+    return this.leftovers;
   }
 
   public toString() {
@@ -65,9 +80,6 @@ export class Hand {
    * @param round - current round of game, b/c that determines which cards are wild
    */
   public evaluateHand(round: number) {
-    // Get count of wild cards - they can substitute for any card
-    this.wildCardCount = this.getWildCardCount(round);
-
     // Look for runs within each suit
     Card.suits.forEach((suit) => {
       const cardsOfSuit = this.getFilteredCards(suit);
@@ -75,7 +87,7 @@ export class Hand {
       // If there are at least 3 cards in the suit
       if (cardsOfSuit.length >= Hand.MINIMUM_SET) {
         // Sort cards into consecutive runs (of whatever length)
-        const sortedRuns = this.sortValuesIntoRuns(cardsOfSuit);
+        const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
         this.processRuns(suit, sortedRuns, round);
       } else {
         // If too few cards in suit for a run, add cards to leftovers
@@ -95,7 +107,7 @@ export class Hand {
   /**
    * Returns new array of cards matching the param
    * @param matcher 'value' or 'suit' to be filtered on
-   * 
+   *
    * TODO: Make private, use rewire for testing
    */
   public getFilteredCards(matcher: string | number): Card[] {
@@ -113,61 +125,13 @@ export class Hand {
   }
 
   /**
-   * Returns count of cards matching the param
-   * @param matcher 'value' or 'suit' to be filtered on
-   */
-  private getFilteredCardCount(matcher: string | number): number {
-    const matchingArray = this.getFilteredCards(matcher);
-    return matchingArray.length;
-  }
-
-  /**
    * @param round - cards where value === round are wild, as are Jokers
    * @return array of Wild Cards
-   * 
+   *
    * TODO: Make private, use rewire for testing
    */
   public getWildCards(round: number): Card[] {
     return this.getFilteredCards('Joker').concat(this.getFilteredCards(round));
-  }
-
-  /**
-   * @param round - cards where value === round are wild, as are Jokers
-   * @return number of wild cards
-   */
-  private getWildCardCount(round: number): number {
-    const matchingArray = this.getWildCards(round);
-    return matchingArray.length;
-  }
-
-  /**
-   *
-   * @param singleSuitCards length >= 3 b/c a run must have at least 3 cards in it
-   * @returns array of arrays of consecutive values, i.e. [[4,5], [7,8,9] [12]]
-   * Ref: http://stackoverflow.com/questions/7352684/how-to-find-the-groups-of-consecutive-elements-from-an-array-in-numpy
-   * 
-   * TODO: Make private, use rewire for testing
-   */
-  public sortValuesIntoRuns(singleSuitCards: Card[]) {
-    // Pull out values of this suit and sort them
-    const valuesArray = singleSuitCards.map((a) => a.value);
-    valuesArray.sort((a, b) => a - b);
-
-    let run: number[] = [];
-    const sortedRuns = [run];
-    let expect = 0;
-
-    valuesArray.forEach((value) => {
-      if (value === expect || expect === 0) {
-        run.push(value);
-      } else {
-        run = [value];
-        sortedRuns.push(run);
-      }
-      expect = value + 1;
-    });
-
-    return sortedRuns;
   }
 
   /**
@@ -180,41 +144,43 @@ export class Hand {
    * @param suit to which all cards in runs belong
    * @param sortedRuns consecutive runs of integers
    * @param round current game round
-   * 
+   *
    * TODO: Make private, use rewire for testing
    */
   public processRuns(suit: string, sortedRuns: number[][], round: number) {
     sortedRuns.forEach((run) => {
       if (run.length === Hand.MINIMUM_SET) {
         // If 3 card run, move to processed
-        const cardArray = this.transformRunArrayIntoCardArray(run, suit);
+        const cardArray = transformRunArrayIntoCardArray(run, suit);
         this.processedCards.push(cardArray);
-        this.removeProcessedCardsFromHand(cardArray);
+        this.removeCardArrayFromHand(cardArray);
       } else if (run.length > Hand.MINIMUM_SET) {
         // If greater than 3 card run, move to longRuns to help with sets later
-        const cardArray = this.transformRunArrayIntoCardArray(run, suit);
+        const cardArray = transformRunArrayIntoCardArray(run, suit);
         this.longRuns.push(cardArray);
-        this.removeProcessedCardsFromHand(cardArray);
+        this.removeCardArrayFromHand(cardArray);
       } else {
         // If less than 3 card run, check if missing cards can be made up from wilds
         const missingCardCount = Hand.MINIMUM_SET - run.length;
-        if (this.wildCardCount >= missingCardCount) {
+        const wildCards: Card[] = this.getWildCards(round);
+        if (wildCards.length >= missingCardCount) {
           // Build card array from what you have
-          const cardArray = this.transformRunArrayIntoCardArray(run, suit);
+          const cardArray = transformRunArrayIntoCardArray(run, suit);
 
           // Add the wild cards needed to make up what is missing
-          const wildCards = this.getWildCards(round);
           for (let i = 0; i < missingCardCount; i++) {
             cardArray.push(wildCards[i]);
           }
 
           // Add set with wilds to processed Cards as with 3 card run above
           this.processedCards.push(cardArray);
-          this.removeProcessedCardsFromHand(cardArray);
+          this.removeCardArrayFromHand(cardArray);
         } else {
           // But if there aren't enough wilds to help, throw in leftovers to help with sets later
           run.forEach((value) => {
-            this.leftovers.push(new Card(suit, value));
+            const cardToRemove: Card = new Card(suit, value);
+            this.leftovers.push(cardToRemove);
+            this.remove(cardToRemove);
           });
         }
       }
@@ -222,16 +188,7 @@ export class Hand {
   }
 
   // TODO: Make private, use rewire for testing
-  public transformRunArrayIntoCardArray(runArray: number[], suit: string): Card[] {
-    const cardArray: Card[] = [];
-    runArray.forEach((value) => {
-      cardArray.push(new Card(suit, value));
-    });
-    return cardArray;
-  }
-
-  // TODO: Make private, use rewire for testing
-  public removeProcessedCardsFromHand(cardArray: Card[]) {
+  public removeCardArrayFromHand(cardArray: Card[]) {
     cardArray.forEach((card) => {
       this.remove(card);
     });
