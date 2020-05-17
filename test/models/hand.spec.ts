@@ -17,7 +17,9 @@ const cardS3 = new Card('Spades', 3);
 const cardS4 = new Card('Spades', 4);
 const cardS5 = new Card('Spades', 5);
 const cardS6 = new Card('Spades', 6);
+const cardS8 = new Card('Spades', 8);
 const cardS9 = new Card('Spades', 9);
+const cardS10 = new Card('Spades', 10);
 const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
 
 describe('hand methods', () => {
@@ -154,51 +156,169 @@ describe('hand methods', () => {
     it('correctly processes sortedRuns where run.length === 3 with Joker', () => {
       // Arrange
       const suit = 'Diamonds';
-      const hand11CardsCopy = _.cloneDeep(hand11Cards);
-      const cardsOfSuit = hand11CardsCopy.getFilteredCards(suit);
+      const hand11CardsDiamondsCopy = _.cloneDeep(hand11Cards);
+      const cardsOfSuit = hand11CardsDiamondsCopy.getFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
-      const round = 10;
+      const round = hand11CardsDiamondsCopy.getCards().length;
 
       // Act
-      hand11CardsCopy.processRuns(suit, sortedRuns, round);
+      hand11CardsDiamondsCopy.processRuns(suit, sortedRuns, round);
 
       // Assert
-      expect(hand11CardsCopy.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardD6]]);
-      expect(hand11CardsCopy.getLongRuns()).to.deep.equal([]);
-      expect(hand11CardsCopy.getLeftovers()).to.deep.equal([cardD13]);
-      expect(hand11CardsCopy.getCards()).to.deep.equal([cardJ, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
+      expect(hand11CardsDiamondsCopy.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardD6]]);
+      expect(hand11CardsDiamondsCopy.getLongRuns()).to.deep.equal([]);
+      expect(hand11CardsDiamondsCopy.getLeftovers()).to.deep.equal([cardD13]);
+      expect(hand11CardsDiamondsCopy.getCards()).to.deep.equal([cardJ, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
     });
 
     it('correctly processes sortedRuns where run.length > 3 with Joker', () => {
-      //      hand11Cards, Spades, sort
-      /*
-      processedCards, longRuns, leftovers
-      hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, 
-        cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
-        */
+      // Arrange
+      const suit = 'Spades';
+      const hand11CardsSpadesCopy = _.cloneDeep(hand11Cards);
+      const cardsOfSuit = hand11CardsSpadesCopy.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = hand11CardsSpadesCopy.getCards().length;
+
+      // Act
+      hand11CardsSpadesCopy.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(hand11CardsSpadesCopy.getProcessedCards()).to.deep.equal([]);
+      expect(hand11CardsSpadesCopy.getLongRuns()).to.deep.equal([[cardS3, cardS4, cardS5, cardS6]]);
+      expect(hand11CardsSpadesCopy.getLeftovers()).to.deep.equal([cardS9]);
+      expect(hand11CardsSpadesCopy.getCards()).to.deep.equal([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13]);
     });
 
+    it('correctly processes sortedRuns where run.length < 3 with Joker', () => {
+      // Arrange
+      const suit = 'Diamonds';
+      const handRunLowWithWilds = new Hand([cardJ, cardD4, cardD5, cardH13]);
+      const cardsOfSuit = handRunLowWithWilds.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = handRunLowWithWilds.getCards().length;
+
+      // Act 
+      handRunLowWithWilds.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(handRunLowWithWilds.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardJ]]);
+      expect(handRunLowWithWilds.getLongRuns()).to.deep.equal([]);
+      expect(handRunLowWithWilds.getLeftovers()).to.deep.equal([]);
+      expect(handRunLowWithWilds.getCards()).to.deep.equal([cardH13]);
+      });
+
     it('correctly processes sortedRuns where run.length === 3 no wilds', () => {
-      //      hand11Cards, Diamonds, sort
+      // Arrange
+      const suit = 'Diamonds';
+      const hand8CardsDiamonds = _.cloneDeep(hand11Cards);
+      hand8CardsDiamonds.remove(cardD13);
+      hand8CardsDiamonds.remove(cardJ);
+      hand8CardsDiamonds.remove(cardS3);
+      const cardsOfSuit = hand8CardsDiamonds.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = hand8CardsDiamonds.getCards().length;
+
+      // Act 
+      hand8CardsDiamonds.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(hand8CardsDiamonds.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardD6]]);
+      expect(hand8CardsDiamonds.getLongRuns()).to.deep.equal([]);
+      expect(hand8CardsDiamonds.getLeftovers()).to.deep.equal([]);
+      expect(hand8CardsDiamonds.getCards()).to.deep.equal([cardH13, cardS4, cardS5, cardS6, cardS9]);
     });
 
     it('correctly processes sortedRuns where run.length > 3 no wilds', () => {
-      //      hand11Cards, Spades, sort
-    });
+      // Arrange
+      const suit = 'Spades';
+      const hand8CardsSpades = _.cloneDeep(hand11Cards);
+      hand8CardsSpades.remove(cardD4);
+      hand8CardsSpades.remove(cardD13);
+      hand8CardsSpades.remove(cardJ);
+      const cardsOfSuit = hand8CardsSpades.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = hand8CardsSpades.getCards().length;
+
+      // Act 
+      hand8CardsSpades.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(hand8CardsSpades.getProcessedCards()).to.deep.equal([]);
+      expect(hand8CardsSpades.getLongRuns()).to.deep.equal([[cardS3, cardS4, cardS5, cardS6]]);
+      expect(hand8CardsSpades.getLeftovers()).to.deep.equal([cardS9]);
+      expect(hand8CardsSpades.getCards()).to.deep.equal([cardD5, cardD6, cardH13]);
+      });
 
     it('correctly processes sortedRuns where run.length < 3 no wilds', () => {
-      const handRunLowWithWilds = new Hand([cardJ, cardD4, cardD5, cardH13]);
-      //      handRunLowWithWilds, Diamonds, sort, Round 9
+      // Arrange
+      const suit = 'Diamonds';
+      const handRunLowNoWilds = new Hand([cardD4, cardD5, cardH13]);
+      const cardsOfSuit = handRunLowNoWilds.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = handRunLowNoWilds.getCards().length;
+
+      // Act 
+      handRunLowNoWilds.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(handRunLowNoWilds.getProcessedCards()).to.deep.equal([]);
+      expect(handRunLowNoWilds.getLongRuns()).to.deep.equal([]);
+      expect(handRunLowNoWilds.getLeftovers()).to.deep.equal([cardD4, cardD5]);
+      expect(handRunLowNoWilds.getCards()).to.deep.equal([cardH13]);
     });
 
-    it('correctly processes sortedRuns where run.length < 3 with Round Wild', () => {
-      const handRunLowWithWilds = new Hand([cardJ, cardD4, cardD5, cardH13]);
-      //      handRunLowWithWilds, Hearts, sort, ROund 4
+    it('correctly processes sortedRuns where there are two 3-card runs, no wilds', () => {
+      // Arrange
+      const suit = 'Spades';
+      const hard7CardsSpades = new Hand([cardH13, cardS3, cardS4, cardS5, cardS8, cardS9, cardS10]);
+      const cardsOfSuit = hard7CardsSpades.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = hard7CardsSpades.getCards().length;
+
+      // Act 
+      hard7CardsSpades.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(hard7CardsSpades.getProcessedCards()).to.deep.equal([[cardS3, cardS4, cardS5], [cardS8, cardS9, cardS10]]);
+      expect(hard7CardsSpades.getLongRuns()).to.deep.equal([]);
+      expect(hard7CardsSpades.getLeftovers()).to.deep.equal([]);
+      expect(hard7CardsSpades.getCards()).to.deep.equal([cardH13]);
     });
 
-    it('correctly processes sortedRuns where run.length < 3 without wilds', () => {
-      const handRunLowNoWilds = new Hand([cardJ, cardD4, cardD5, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
-      //      handRunLowWithWilds, Diamonds, sort, ROund 10
+    it('correctly processes sortedRuns where there are two runs, 3 & 4 cards, no wilds', () => {
+      // Arrange
+      const suit = 'Spades';
+      const hard8CardsSpades = new Hand([cardH13, cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardS10]);
+      const cardsOfSuit = hard8CardsSpades.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = hard8CardsSpades.getCards().length;
+
+      // Act 
+      hard8CardsSpades.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(hard8CardsSpades.getProcessedCards()).to.deep.equal([[cardS8, cardS9, cardS10]]);
+      expect(hard8CardsSpades.getLongRuns()).to.deep.equal([[cardS3, cardS4, cardS5, cardS6]]);
+      expect(hard8CardsSpades.getLeftovers()).to.deep.equal([]);
+      expect(hard8CardsSpades.getCards()).to.deep.equal([cardH13]);
+    });
+
+    it('correctly processes sortedRuns where there is one run, one almost run, two wilds', () => {
+      // Arrange
+      const suit = 'Spades';
+      const hard8CardsSpadesJoker = new Hand([cardH13, cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardJ]);
+      const cardsOfSuit = hard8CardsSpadesJoker.getFilteredCards(suit);
+      const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
+      const round = hard8CardsSpadesJoker.getCards().length;
+
+      // Act 
+      hard8CardsSpadesJoker.processRuns(suit, sortedRuns, round);
+
+      // Assert
+      expect(hard8CardsSpadesJoker.getProcessedCards()).to.deep.equal([[cardS8, cardS9, cardJ]]);
+      expect(hard8CardsSpadesJoker.getLongRuns()).to.deep.equal([[cardS3, cardS4, cardS5, cardS6]]);
+      expect(hard8CardsSpadesJoker.getLeftovers()).to.deep.equal([]);
+      expect(hard8CardsSpadesJoker.getCards()).to.deep.equal([cardH13]);
     });
   });
 
