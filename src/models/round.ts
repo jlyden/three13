@@ -101,7 +101,7 @@ export class Round {
    */
   public setFirstPlayerForRound() {
     const userCount = this.game.players.length;
-    const corrective = Math.abs(Game.startingRound - userCount);
+    const corrective = Math.abs(Game.STARTING_ROUND - userCount);
     const currentPlayerIndex = (this.game.round + corrective) % userCount;
     this.currentPlayer = this.game.players[currentPlayerIndex];
     this.setMessage(this.currentPlayer.nickname + drawMessage);

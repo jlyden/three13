@@ -2,9 +2,9 @@ import { User } from '../models';
 
 export class Game {
   // 313 starts at round 3 and goes to round 13
-  static startingRound = 3;
-  static playerCountMin = 2;
-  static playerCountMax = 6;
+  static STARTING_ROUND = 3;
+  static PLAYER_COUNT_MIN = 2;
+  static PLAYER_COUNT_MAX = 6;
 
   public id: number;
   public players: User[];
@@ -12,12 +12,12 @@ export class Game {
 
   constructor(id: number, players: User[]) {
     this.id = id; // TODO: Refactor when there's a db to provide this
-    if (players.length >= Game.playerCountMin && players.length <= Game.playerCountMax) {
+    if (players.length >= Game.PLAYER_COUNT_MIN && players.length <= Game.PLAYER_COUNT_MAX) {
       this.players = players;
     } else {
       throw new RangeError('Players[] must have 2-6 members.');
     }
-    this.round = Game.startingRound;
+    this.round = Game.STARTING_ROUND;
   }
 
   public goToNextRound() {

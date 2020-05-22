@@ -175,8 +175,8 @@ describe('round methods', () => {
       const originalVisibleCard = discardFailRoundOne.visibleCard;
 
       let missingSuit = '';
-      for(const suit of Card.suits) {
-        const matched = discardFailRoundOne.hands[handIndex].getFilteredCards(suit);
+      for(const suit of Card.SUITS) {
+        const matched = discardFailRoundOne.hands[handIndex].findFilteredCards(suit);
         if(matched.length === 0){
           missingSuit = suit;
           break;

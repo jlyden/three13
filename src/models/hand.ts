@@ -81,8 +81,13 @@ export class Hand {
    */
   public evaluateHand(round: number) {
     // Look for runs within each suit
-    Card.suits.forEach((suit) => {
-      const cardsOfSuit = this.getFilteredCards(suit);
+    for(const suit of Card.SUITS){
+      // Ignore Jokers as 'suit'
+      if(suit === 'Joker'){
+        continue;
+      }
+
+      const cardsOfSuit = this.findFilteredCards(suit);
 
       // If there are at least 3 cards in the suit
       if (cardsOfSuit.length >= Hand.MINIMUM_SET) {
@@ -95,22 +100,28 @@ export class Hand {
           this.leftovers.push(card);
         });
       }
+    };
 
-      // Look for sets in 'leftovers'
+    // At end of run processing, only cards in 'hand.cards' should be Jokers
+    // Move them to leftovers to simplify the following 
+
+    // Process sets out of the leftovers
+    this.processSets();
+
       // check leftovers for sets of duplicate numbers
-      // (twice in case of buried last cards)
+      // (twice ?? in case of buried last cards)
 
-      // calculate penalty
-    });
+    // calculate penalty based on what remains in leftovers
   }
 
   /**
    * Returns new array of cards matching the param
    * @param matcher 'value' or 'suit' to be filtered on
    *
+   * Note: This does not remove cards from hand
    * TODO: Make private, use rewire for testing
    */
-  public getFilteredCards(matcher: string | number): Card[] {
+  public findFilteredCards(matcher: string | number): Card[] {
     let matchingArray: Card[];
     if (typeof matcher === 'string') {
       matchingArray = _.filter(this.cards, {
@@ -128,10 +139,11 @@ export class Hand {
    * @param round - cards where value === round are wild, as are Jokers
    * @return array of Wild Cards
    *
+   * Note: This does not remove cards from hand
    * TODO: Make private, use rewire for testing
    */
-  public getWildCards(round: number): Card[] {
-    return this.getFilteredCards('Joker').concat(this.getFilteredCards(round));
+  public findWildCards(round: number): Card[] {
+    return this.findFilteredCards('Joker').concat(this.findFilteredCards(round));
   }
 
   /**
@@ -162,7 +174,7 @@ export class Hand {
       } else {
         // If less than 3 card run, check if missing cards can be made up from wilds
         const missingCardCount = Hand.MINIMUM_SET - run.length;
-        const wildCards: Card[] = this.getWildCards(round);
+        const wildCards: Card[] = this.findWildCards(round);
         if (wildCards.length >= missingCardCount) {
           // Build card array from what you have
           const cardArray = transformRunArrayIntoCardArray(run, suit);
@@ -176,7 +188,7 @@ export class Hand {
           this.processedCards.push(cardArray);
           this.removeCardArrayFromHand(cardArray);
         } else {
-          // But if there aren't enough wilds to help, throw in leftovers to help with sets later
+          // But if there aren't enough wilds to help, throw these cards in leftovers to help with sets later
           run.forEach((value) => {
             const cardToRemove: Card = new Card(suit, value);
             this.leftovers.push(cardToRemove);
@@ -192,5 +204,32 @@ export class Hand {
     cardArray.forEach((card) => {
       this.remove(card);
     });
+  }
+
+  /**
+   * Sort & group leftovers by number
+   * Remove sets of 3 or 4 cards of same value from leftovers
+   * Look in long_runs (where run > 3) for completion cards for 1 or 2 card sets
+   * Consider wilds to make up what is still missing
+   * Return transformed leftovers & long_runs
+   * TODO: Make private, use rewire for testing
+   */
+  public processSets() {
+    // find whatever wilds are left
+    // filter leftovers by value, but don't consider round wilds as a set
+    // process sets backwards, so higher-point cards are resolved earlier
+    // for each potential set, if set >= 3, add to processed cards - done
+    // if set < 3, look for help in long runs
+      // if set.value = a_long_run[0] or a_long_run[-1], let's use it!
+        // 1) add potential set card(s) from leftovers to new card array
+        // 2a) remove helper card from a_long_run and add to new set card array, 
+        //    which should now have length == 3
+        // 2b) if set is still < 3, look through long runs for more help, and wilds
+        // 2c) if there's no help to get us past 2 card set, return extra card to a_long_run
+        // 3) but if able to complete set, put new set card array in processed cards
+        // 4) if a_long_run.length > 3, keep it in long_runs; else move to processed_cards
+      // else if we have wilds, let's use them 
+        // if set can be formed with wilds, follow logic from ln 165-185 - new method?
+    // whatever cannot be formed into sets stays in leftovers for point processing 
   }
 }

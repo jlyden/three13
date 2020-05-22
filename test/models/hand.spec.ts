@@ -86,59 +86,59 @@ describe('hand methods', () => {
     // TODO:
   });
 
-  describe('getFilteredCards', () => {
+  describe('findFilteredCards', () => {
     it('returns single card filtered by suit', () => {
       const expected: Card[] = [cardH13];
-      expect(hand11Cards.getFilteredCards('Hearts')).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards('Hearts')).to.deep.equal(expected);
     });
 
     it('returns multiple cards filtered by suit', () => {
       const expected: Card[] = [cardD4, cardD5, cardD6, cardD13];
-      expect(hand11Cards.getFilteredCards('Diamonds')).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards('Diamonds')).to.deep.equal(expected);
     });
 
     it('returns empty when hand has none of that suit', () => {
       const expected: Card[] = [];
-      expect(hand11Cards.getFilteredCards('Clubs')).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards('Clubs')).to.deep.equal(expected);
     });
 
     it('returns single card filtered by value', () => {
       const expected: Card[] = [cardS9];
-      expect(hand11Cards.getFilteredCards(9)).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards(9)).to.deep.equal(expected);
     });
 
     it('returns multiple cards filtered by value', () => {
       const expected: Card[] = [cardD5, cardS5];
-      expect(hand11Cards.getFilteredCards(5)).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards(5)).to.deep.equal(expected);
     });
 
     it('returns empty when hand has none of that value', () => {
       const expected: Card[] = [];
-      expect(hand11Cards.getFilteredCards(11)).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards(11)).to.deep.equal(expected);
     });
   });
 
-  describe('getWildCards', () => {
+  describe('findWildCards', () => {
     it('returns wild cards without round wilds', () => {
       const expected: Card[] = [cardJ];
-      expect(hand11Cards.getWildCards(11)).to.deep.equal(expected);
+      expect(hand11Cards.findWildCards(11)).to.deep.equal(expected);
     });
 
     it('returns wild cards including round wilds', () => {
       const expected: Card[] = [cardJ, cardD4, cardS4];
-      expect(hand11Cards.getWildCards(4)).to.deep.equal(expected);
+      expect(hand11Cards.findWildCards(4)).to.deep.equal(expected);
     });
 
     it('returns wild cards without jokers', () => {
       const handNoJoker = new Hand([cardH13, cardD6, cardS6, cardS9]);
       const expected: Card[] = [cardD6, cardS6];
-      expect(handNoJoker.getWildCards(6)).to.deep.equal(expected);
+      expect(handNoJoker.findWildCards(6)).to.deep.equal(expected);
     });
 
     it('returns empty when hand has no wilds', () => {
       const handNoWilds = new Hand([cardH13, cardD6, cardS6, cardS9]);
       const expected: Card[] = [];
-      expect(handNoWilds.getWildCards(12)).to.deep.equal(expected);
+      expect(handNoWilds.findWildCards(12)).to.deep.equal(expected);
     });
   });
 
@@ -147,7 +147,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Diamonds';
       const hand11CardsDiamondsCopy = _.cloneDeep(hand11Cards);
-      const cardsOfSuit = hand11CardsDiamondsCopy.getFilteredCards(suit);
+      const cardsOfSuit = hand11CardsDiamondsCopy.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand11CardsDiamondsCopy.getCards().length;
 
@@ -165,7 +165,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Spades';
       const hand11CardsSpadesCopy = _.cloneDeep(hand11Cards);
-      const cardsOfSuit = hand11CardsSpadesCopy.getFilteredCards(suit);
+      const cardsOfSuit = hand11CardsSpadesCopy.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand11CardsSpadesCopy.getCards().length;
 
@@ -183,7 +183,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Diamonds';
       const handRunLowWithWilds = new Hand([cardJ, cardD4, cardD5, cardH13]);
-      const cardsOfSuit = handRunLowWithWilds.getFilteredCards(suit);
+      const cardsOfSuit = handRunLowWithWilds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = handRunLowWithWilds.getCards().length;
 
@@ -204,7 +204,7 @@ describe('hand methods', () => {
       hand8CardsDiamonds.remove(cardD13);
       hand8CardsDiamonds.remove(cardJ);
       hand8CardsDiamonds.remove(cardS3);
-      const cardsOfSuit = hand8CardsDiamonds.getFilteredCards(suit);
+      const cardsOfSuit = hand8CardsDiamonds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand8CardsDiamonds.getCards().length;
 
@@ -225,7 +225,7 @@ describe('hand methods', () => {
       hand8CardsSpades.remove(cardD4);
       hand8CardsSpades.remove(cardD13);
       hand8CardsSpades.remove(cardJ);
-      const cardsOfSuit = hand8CardsSpades.getFilteredCards(suit);
+      const cardsOfSuit = hand8CardsSpades.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand8CardsSpades.getCards().length;
 
@@ -243,7 +243,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Diamonds';
       const handRunLowNoWilds = new Hand([cardD4, cardD5, cardH13]);
-      const cardsOfSuit = handRunLowNoWilds.getFilteredCards(suit);
+      const cardsOfSuit = handRunLowNoWilds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = handRunLowNoWilds.getCards().length;
 
@@ -261,7 +261,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Spades';
       const hard7CardsSpades = new Hand([cardH13, cardS3, cardS4, cardS5, cardS8, cardS9, cardS10]);
-      const cardsOfSuit = hard7CardsSpades.getFilteredCards(suit);
+      const cardsOfSuit = hard7CardsSpades.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard7CardsSpades.getCards().length;
 
@@ -279,7 +279,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Spades';
       const hard8CardsSpades = new Hand([cardH13, cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardS10]);
-      const cardsOfSuit = hard8CardsSpades.getFilteredCards(suit);
+      const cardsOfSuit = hard8CardsSpades.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard8CardsSpades.getCards().length;
 
@@ -297,7 +297,7 @@ describe('hand methods', () => {
       // Arrange
       const suit = 'Spades';
       const hard8CardsSpadesJoker = new Hand([cardH13, cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardJ]);
-      const cardsOfSuit = hard8CardsSpadesJoker.getFilteredCards(suit);
+      const cardsOfSuit = hard8CardsSpadesJoker.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard8CardsSpadesJoker.getCards().length;
 

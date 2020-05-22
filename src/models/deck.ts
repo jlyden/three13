@@ -39,11 +39,11 @@ export class Deck {
     this.cards = [];
 
     // tslint:disable-next-line: forin
-    for (const suit in Card.suits) {
-      if (Card.suits[suit] !== 'Joker') {
+    for (const suit in Card.SUITS) {
+      if (Card.SUITS[suit] !== 'Joker') {
         // tslint:disable-next-line: forin
-        for (const value in Card.values) {
-          const card = new Card(Card.suits[suit], Card.values[value]);
+        for (const value in Card.VALUES) {
+          const card = new Card(Card.SUITS[suit], Card.VALUES[value]);
           this.cards.push(card);
         }
       }
