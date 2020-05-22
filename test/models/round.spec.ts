@@ -1,16 +1,12 @@
 import chai from 'chai';
 import forEach from 'mocha-each';
 import _ from 'lodash';
-import { Round, Game, User, Card } from '../../src/models';
+import { Round, Game, User, Card, Hand } from '../../src/models';
+import { invalidDiscardMessage } from '../../src/constants/messages';
+import { userOne, userTwo, userThree, userFour, userFive, userSix } from '../common/testData';
 
 const { expect } = chai;
 
-const userOne = new User(1, 'Alice');
-const userTwo = new User(2, 'Bert');
-const userThree = new User(3, 'Calvin');
-const userFour = new User(4, 'Dahlia');
-const userFive = new User(5, 'Edith');
-const userSix = new User(6, 'Fred');
 const twoPlayers = [userOne, userTwo];
 const threePlayers = [userOne, userTwo, userThree];
 
@@ -36,12 +32,11 @@ describe('round methods', () => {
       expect(progGameRoundOne.message).to.equal('Alice - time to discard');
 
       // Expected card actions
-      //      expect(progGameRoundOne.hands[handIndex].toString()).to.include(visibleCard.toString());
       expect(progGameRoundOne.hands[handIndex].getCards().length).to.equal(handCountBefore + 1);
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(), [visibleCard], _.isEqual)).to.deep.equal([
-        visibleCard,
-      ]);
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(),
+        [visibleCard], 
+        _.isEqual)).to.deep.equal([visibleCard,]);
       // tslint:disable-next-line: no-unused-expression
       expect(progGameRoundOne.visibleCard).to.be.null;
     });
@@ -165,6 +160,37 @@ describe('round methods', () => {
     it('prompts the first user to play', () => {
       expect(testRound.currentPlayer).to.deep.equal(twoPlayers[0]);
       expect(testRound.message).to.equal('Alice - time to draw');
+    });
+  });
+
+  describe('discardAfterTurn', () => {
+    it('publishes corrective message when card is not in hand', () => {
+      // Arrange
+      const discardFailGame = new Game(1, threePlayers);
+      const discardFailRoundOne = new Round(discardFailGame);
+      discardFailRoundOne.startRound();
+      discardFailRoundOne.takeVisibleCard();
+      const handIndex = discardFailRoundOne.getCurrentPlayerIndex();
+      expect(discardFailRoundOne.hands[handIndex].getCards()).to.have.length(4);
+      const originalVisibleCard = discardFailRoundOne.visibleCard;
+
+      let missingSuit = '';
+      for(const suit of Card.suits) {
+        const matched = discardFailRoundOne.hands[handIndex].getFilteredCards(suit);
+        if(matched.length === 0){
+          missingSuit = suit;
+          break;
+        }
+      }
+      // 4 cards, 5 suits (including Joker), so assign card from missing
+      const discardFail = new Card(missingSuit, 3);
+      
+      // Act
+      discardFailRoundOne.discardAfterTurn(discardFail);
+
+      // Assert
+      expect(discardFailRoundOne.message).to.equal(invalidDiscardMessage);
+      expect(discardFailRoundOne.visibleCard).to.deep.equal(originalVisibleCard);
     });
   });
 

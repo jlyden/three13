@@ -54,15 +54,17 @@ export class Round {
   public discardAfterTurn(card: Card) {
     // Get current user's hand
     const handIndex = this.getCurrentPlayerIndex();
-    // Remove specified card and set it to visibleCard
+
     try {
-      this.visibleCard = this.hands[handIndex].remove(card);
+    // Remove specified card and set it to visibleCard
+    this.visibleCard = this.hands[handIndex].remove(card);
+
+      // Set up for next player turn
+      this.setNextCurrentPlayer();
     } catch (error) {
+      // If error, set message so player can try again
       this.setMessage(invalidDiscardMessage);
     }
-
-    // Set up for next player turn
-    this.setNextCurrentPlayer();
   }
 
   // NOTE: User needs to communicate discard and intention to 'Go out'

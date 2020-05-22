@@ -2,21 +2,11 @@ import chai from 'chai';
 import _ from 'lodash';
 import { Card } from '../../src/models';
 import { transformRunArrayIntoCardArray, sortValuesIntoRuns } from '../../src/utils';
+import { cardS3, cardS4, cardS5, cardS6, cardS9, cardH13 } from '../common/testData';
 
 const { expect } = chai;
 
-const cardJ = new Card('Joker', 3);
-const cardD4 = new Card('Diamonds', 4);
-const cardD5 = new Card('Diamonds', 5);
-const cardD6 = new Card('Diamonds', 6);
-const cardD13 = new Card('Diamonds', 13);
-const cardH13 = new Card('Hearts', 13);
-const cardS3 = new Card('Spades', 3);
-const cardS4 = new Card('Spades', 4);
-const cardS5 = new Card('Spades', 5);
-const cardS6 = new Card('Spades', 6);
-const cardS9 = new Card('Spades', 9);
-
+// TODO: more tests?
 describe('utils: cardUtils methods', () => {
   describe('transformRunArrayIntoCardArray', () => {
     it('properly completes transformation', () => {

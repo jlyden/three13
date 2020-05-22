@@ -2,28 +2,18 @@ import chai from 'chai';
 import _ from 'lodash';
 import { Card, Hand } from '../../src/models';
 import { sortValuesIntoRuns } from '../../src/utils';
+import { cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, 
+  cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardS10 } from '../common/testData';
 
 const { expect } = chai;
 
 // Setup
-const genericTestHand = new Hand();
-const cardJ = new Card('Joker', 3);
-const cardD4 = new Card('Diamonds', 4);
-const cardD5 = new Card('Diamonds', 5);
-const cardD6 = new Card('Diamonds', 6);
-const cardD13 = new Card('Diamonds', 13);
-const cardH13 = new Card('Hearts', 13);
-const cardS3 = new Card('Spades', 3);
-const cardS4 = new Card('Spades', 4);
-const cardS5 = new Card('Spades', 5);
-const cardS6 = new Card('Spades', 6);
-const cardS8 = new Card('Spades', 8);
-const cardS9 = new Card('Spades', 9);
-const cardS10 = new Card('Spades', 10);
-const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
+const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, 
+  cardS3, cardS4, cardS5, cardS6, cardS9]);
 
 describe('hand methods', () => {
   // Setup for discard and toString
+  const genericTestHand = new Hand();
   let handWithOneCard: Hand;
   let handWithTwoCards: Hand;
 
@@ -65,7 +55,7 @@ describe('hand methods', () => {
     it('throws error when trying to remove a card not in hand', () => {
       const badDiscard = new Card('Spades', 5);
       const expectedError = 'Attempted discard <5 of Spades> not in hand.';
-      expect(genericTestHand.remove.bind(genericTestHand, badDiscard)).to.throw(expectedError);
+      expect(() => genericTestHand.remove(badDiscard)).to.throw(expectedError);
       expect(genericTestHand.getCards().length).to.equal(3);
     });
 

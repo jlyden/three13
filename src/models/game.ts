@@ -3,6 +3,8 @@ import { User } from '../models';
 export class Game {
   // 313 starts at round 3 and goes to round 13
   static startingRound = 3;
+  static playerCountMin = 2;
+  static playerCountMax = 6;
 
   public id: number;
   public players: User[];
@@ -10,7 +12,7 @@ export class Game {
 
   constructor(id: number, players: User[]) {
     this.id = id; // TODO: Refactor when there's a db to provide this
-    if (players.length > 1 && players.length < 7) {
+    if (players.length >= Game.playerCountMin && players.length <= Game.playerCountMax) {
       this.players = players;
     } else {
       throw new RangeError('Players[] must have 2-6 members.');
