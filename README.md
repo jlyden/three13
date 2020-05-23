@@ -23,5 +23,3 @@ https://tutorialedge.net/typescript/typescript-mongodb-beginners-tutorial/
 https://www.w3schools.com/nodejs/nodejs_mongodb_create_db.asp
 
 https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n
-
-https://www.npmjs.com/package/simple-node-logger

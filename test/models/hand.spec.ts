@@ -152,7 +152,7 @@ describe('hand methods', () => {
       const round = hand11CardsDiamondsCopy.getCards().length;
 
       // Act
-      hand11CardsDiamondsCopy.processRuns(suit, sortedRuns, round);
+      hand11CardsDiamondsCopy.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hand11CardsDiamondsCopy.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardD6]]);
@@ -170,7 +170,7 @@ describe('hand methods', () => {
       const round = hand11CardsSpadesCopy.getCards().length;
 
       // Act
-      hand11CardsSpadesCopy.processRuns(suit, sortedRuns, round);
+      hand11CardsSpadesCopy.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hand11CardsSpadesCopy.getProcessedCards()).to.deep.equal([]);
@@ -188,7 +188,7 @@ describe('hand methods', () => {
       const round = handRunLowWithWilds.getCards().length;
 
       // Act 
-      handRunLowWithWilds.processRuns(suit, sortedRuns, round);
+      handRunLowWithWilds.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(handRunLowWithWilds.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardJ]]);
@@ -209,7 +209,7 @@ describe('hand methods', () => {
       const round = hand8CardsDiamonds.getCards().length;
 
       // Act 
-      hand8CardsDiamonds.processRuns(suit, sortedRuns, round);
+      hand8CardsDiamonds.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hand8CardsDiamonds.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardD6]]);
@@ -230,7 +230,7 @@ describe('hand methods', () => {
       const round = hand8CardsSpades.getCards().length;
 
       // Act 
-      hand8CardsSpades.processRuns(suit, sortedRuns, round);
+      hand8CardsSpades.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hand8CardsSpades.getProcessedCards()).to.deep.equal([]);
@@ -248,7 +248,7 @@ describe('hand methods', () => {
       const round = handRunLowNoWilds.getCards().length;
 
       // Act 
-      handRunLowNoWilds.processRuns(suit, sortedRuns, round);
+      handRunLowNoWilds.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(handRunLowNoWilds.getProcessedCards()).to.deep.equal([]);
@@ -266,7 +266,7 @@ describe('hand methods', () => {
       const round = hard7CardsSpades.getCards().length;
 
       // Act 
-      hard7CardsSpades.processRuns(suit, sortedRuns, round);
+      hard7CardsSpades.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hard7CardsSpades.getProcessedCards()).to.deep.equal([[cardS3, cardS4, cardS5], [cardS8, cardS9, cardS10]]);
@@ -284,7 +284,7 @@ describe('hand methods', () => {
       const round = hard8CardsSpades.getCards().length;
 
       // Act 
-      hard8CardsSpades.processRuns(suit, sortedRuns, round);
+      hard8CardsSpades.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hard8CardsSpades.getProcessedCards()).to.deep.equal([[cardS8, cardS9, cardS10]]);
@@ -302,7 +302,7 @@ describe('hand methods', () => {
       const round = hard8CardsSpadesJoker.getCards().length;
 
       // Act 
-      hard8CardsSpadesJoker.processRuns(suit, sortedRuns, round);
+      hard8CardsSpadesJoker.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
       expect(hard8CardsSpadesJoker.getProcessedCards()).to.deep.equal([[cardS8, cardS9, cardJ]]);

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Card } from '../models';
 
 export function transformRunArrayIntoCardArray(runArray: number[], suit: string): Card[] {
@@ -34,4 +35,19 @@ export function sortValuesIntoRuns(singleSuitCards: Card[]) {
   });
 
   return sortedRuns;
+}
+
+export function reduceCardsByValue(cards: Card[]) {
+  const reducedValues: { [key: string]: number } = 
+  cards.reduce((tally: { [key: string]: number }, card: Card) => {
+    tally[card.value] = tally[card.value] + 1 || 1;
+    return tally;
+  }, {});
+
+  return reducedValues;
+}
+
+export function removeValueFromArray(anArray: number[], value: number) {
+  const removedValue = _.pull(anArray, value);
+  return anArray;
 }
