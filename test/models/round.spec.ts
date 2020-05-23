@@ -34,9 +34,9 @@ describe('round methods', () => {
       // Expected card actions
       expect(progGameRoundOne.hands[handIndex].getCards().length).to.equal(handCountBefore + 1);
       // tslint:disable-next-line: no-unused-expression
-      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(),
-        [visibleCard], 
-        _.isEqual)).to.deep.equal([visibleCard,]);
+      expect(_.intersectionWith(progGameRoundOne.hands[handIndex].getCards(), [visibleCard], _.isEqual)).to.deep.equal([
+        visibleCard,
+      ]);
       // tslint:disable-next-line: no-unused-expression
       expect(progGameRoundOne.visibleCard).to.be.null;
     });
@@ -175,16 +175,16 @@ describe('round methods', () => {
       const originalVisibleCard = discardFailRoundOne.visibleCard;
 
       let missingSuit = '';
-      for(const suit of Card.SUITS) {
+      for (const suit of Card.SUITS) {
         const matched = discardFailRoundOne.hands[handIndex].findFilteredCards(suit);
-        if(matched.length === 0){
+        if (matched.length === 0) {
           missingSuit = suit;
           break;
         }
       }
       // 4 cards, 5 suits (including Joker), so assign card from missing
       const discardFail = new Card(missingSuit, 3);
-      
+
       // Act
       discardFailRoundOne.discardAfterTurn(discardFail);
 

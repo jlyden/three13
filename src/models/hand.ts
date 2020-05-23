@@ -42,6 +42,10 @@ export class Hand {
     return this.leftovers;
   }
 
+  public addToLeftovers(card: Card) {
+    this.leftovers.push(card);
+  }
+
   public toString() {
     let stringHand = '[';
     if (this.cards.length > 0) {
@@ -102,7 +106,7 @@ export class Hand {
           this.leftovers.push(card);
         });
       }
-    };
+    }
 
     // Prepare to process sets
     this.moveLeftoversBackToHand();
@@ -191,7 +195,11 @@ export class Hand {
           // But if there aren't enough wilds to help, throw these cards in leftovers to help with sets later
           run.forEach((value) => {
             const cardToRemove: Card = new Card(suit, value);
-            this.moveHandCardToLeftovers(cardToRemove);
+            try {
+              this.moveHandCardToLeftovers(cardToRemove);
+            } catch (error) {
+              // TODO: Now what? somehow we tried to remove a card that isn't there
+            }
           });
         }
       }
@@ -215,7 +223,7 @@ export class Hand {
   /**
    * Runs are already removed from hand, these are just 'leftovers'
    * Sort & group hand by number
-   * Remove sets of 3 or 4 cards of same value 
+   * Remove sets of 3 or 4 cards of same value
    * Look in long_runs (where run > 3) for completion cards for 1 or 2 card sets
    * Consider wilds to make up what is still missing
    * TODO: Make private, use rewire for testing
@@ -249,7 +257,7 @@ export class Hand {
               // Move set to processed cards
               this.processedCards.push(cardsOfValue);
 
-              // Move long run to processed cards if it's no longer long            
+              // Move long run to processed cards if it's no longer long
               if (longRunCount - 1 === Hand.MINIMUM_SET) {
                 // remove longRun From longRuns
                 const removedLongRun = _.pullAt(this.longRuns, i)[0];
@@ -268,7 +276,7 @@ export class Hand {
               // Move set to processed cards
               this.processedCards.push(cardsOfValue);
 
-              // Move long run to processed cards if it's no longer long            
+              // Move long run to processed cards if it's no longer long
               if (longRunCount - 1 === Hand.MINIMUM_SET) {
                 // remove longRun From longRuns
                 const removedLongRun = _.pullAt(this.longRuns, i)[0];
@@ -282,13 +290,13 @@ export class Hand {
         }
         // QUESTION: if we break after pushing cardsOfValue to processed,
         //           can we still end up here? If so, need to bail
-        
+
         // If we didn't break out, set isn't complete yet - check wilds
         // Find whatever wilds are left
         const wildCards: Card[] = this.findWildCards(round);
         const neededCards = Hand.MINIMUM_SET - cardsOfValue.length;
         // If we have enough wild cards to complete set, do it
-        if(wildCards.length >= neededCards) {
+        if (wildCards.length >= neededCards) {
           do {
             // move wildcard from hand to cardsOfValue
             const wildCard = this.remove(wildCards.pop());
@@ -302,8 +310,12 @@ export class Hand {
         // Same QUESTION as before
         // If we couldn't complete set with longRuns or wilds,
         // push to leftovers for calculations
-        cardsOfValue.forEach(card => {
-          this.moveHandCardToLeftovers(card);
+        cardsOfValue.forEach((card) => {
+          try {
+            this.moveHandCardToLeftovers(card);
+          } catch (error) {
+            // TODO: Now what? somehow we tried to remove a card that isn't there
+          }
         });
       }
     }
@@ -313,14 +325,20 @@ export class Hand {
   public getValuesFromHand() {
     const cardsReducedArray = reduceCardsByValue(this.cards);
     // NOTE: I don't think this array will have 0s in it. check
-    const valuesArray = Object.keys(cardsReducedArray).map(v => Number(v));
-    valuesArray.sort((a, b) => { return b - a });
+    const valuesArray = Object.keys(cardsReducedArray).map((v) => Number(v));
+    valuesArray.sort((a, b) => {
+      return b - a;
+    });
     return valuesArray;
   }
 
   // TODO: Make private, use rewire for testing
   public moveHandCardToLeftovers(card: Card) {
-      this.leftovers.push(card);
+    try {
       this.remove(card);
+      this.addToLeftovers(card);
+    } catch (error) {
+      throw Error(error.message);
+    }
   }
 }

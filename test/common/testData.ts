@@ -1,5 +1,4 @@
-import { Card, User } from "../../src/models";
-
+import { Card, User } from '../../src/models';
 
 // Users
 export const userOne = new User(1, 'Alice');
@@ -23,4 +22,3 @@ export const cardS6 = new Card('Spades', 6);
 export const cardS8 = new Card('Spades', 8);
 export const cardS9 = new Card('Spades', 9);
 export const cardS10 = new Card('Spades', 10);
-

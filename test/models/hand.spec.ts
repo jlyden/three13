@@ -2,14 +2,26 @@ import chai from 'chai';
 import _ from 'lodash';
 import { Card, Hand } from '../../src/models';
 import { sortValuesIntoRuns } from '../../src/utils';
-import { cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, 
-  cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardS10 } from '../common/testData';
+import {
+  cardJ,
+  cardD4,
+  cardD5,
+  cardD6,
+  cardD13,
+  cardH13,
+  cardS3,
+  cardS4,
+  cardS5,
+  cardS6,
+  cardS8,
+  cardS9,
+  cardS10,
+} from '../common/testData';
 
 const { expect } = chai;
 
 // Setup
-const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, 
-  cardS3, cardS4, cardS5, cardS6, cardS9]);
+const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
 
 describe('hand methods', () => {
   // Setup for discard and toString
@@ -158,7 +170,15 @@ describe('hand methods', () => {
       expect(hand11CardsDiamondsCopy.getProcessedCards()).to.deep.equal([[cardD4, cardD5, cardD6]]);
       expect(hand11CardsDiamondsCopy.getLongRuns()).to.deep.equal([]);
       expect(hand11CardsDiamondsCopy.getLeftovers()).to.deep.equal([cardD13]);
-      expect(hand11CardsDiamondsCopy.getCards()).to.deep.equal([cardJ, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
+      expect(hand11CardsDiamondsCopy.getCards()).to.deep.equal([
+        cardJ,
+        cardH13,
+        cardS3,
+        cardS4,
+        cardS5,
+        cardS6,
+        cardS9,
+      ]);
     });
 
     it('correctly processes sortedRuns where run.length > 3 with Joker', () => {
@@ -187,7 +207,7 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = handRunLowWithWilds.getCards().length;
 
-      // Act 
+      // Act
       handRunLowWithWilds.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
@@ -195,7 +215,7 @@ describe('hand methods', () => {
       expect(handRunLowWithWilds.getLongRuns()).to.deep.equal([]);
       expect(handRunLowWithWilds.getLeftovers()).to.deep.equal([]);
       expect(handRunLowWithWilds.getCards()).to.deep.equal([cardH13]);
-      });
+    });
 
     it('correctly processes sortedRuns where run.length === 3 no wilds', () => {
       // Arrange
@@ -208,7 +228,7 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand8CardsDiamonds.getCards().length;
 
-      // Act 
+      // Act
       hand8CardsDiamonds.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
@@ -229,7 +249,7 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand8CardsSpades.getCards().length;
 
-      // Act 
+      // Act
       hand8CardsSpades.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
@@ -237,7 +257,7 @@ describe('hand methods', () => {
       expect(hand8CardsSpades.getLongRuns()).to.deep.equal([[cardS3, cardS4, cardS5, cardS6]]);
       expect(hand8CardsSpades.getLeftovers()).to.deep.equal([cardS9]);
       expect(hand8CardsSpades.getCards()).to.deep.equal([cardD5, cardD6, cardH13]);
-      });
+    });
 
     it('correctly processes sortedRuns where run.length < 3 no wilds', () => {
       // Arrange
@@ -247,7 +267,7 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = handRunLowNoWilds.getCards().length;
 
-      // Act 
+      // Act
       handRunLowNoWilds.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
@@ -265,11 +285,14 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard7CardsSpades.getCards().length;
 
-      // Act 
+      // Act
       hard7CardsSpades.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
-      expect(hard7CardsSpades.getProcessedCards()).to.deep.equal([[cardS3, cardS4, cardS5], [cardS8, cardS9, cardS10]]);
+      expect(hard7CardsSpades.getProcessedCards()).to.deep.equal([
+        [cardS3, cardS4, cardS5],
+        [cardS8, cardS9, cardS10],
+      ]);
       expect(hard7CardsSpades.getLongRuns()).to.deep.equal([]);
       expect(hard7CardsSpades.getLeftovers()).to.deep.equal([]);
       expect(hard7CardsSpades.getCards()).to.deep.equal([cardH13]);
@@ -283,7 +306,7 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard8CardsSpades.getCards().length;
 
-      // Act 
+      // Act
       hard8CardsSpades.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
@@ -301,7 +324,7 @@ describe('hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard8CardsSpadesJoker.getCards().length;
 
-      // Act 
+      // Act
       hard8CardsSpadesJoker.removeValidRunsFromHand(suit, sortedRuns, round);
 
       // Assert
@@ -327,6 +350,33 @@ describe('hand methods', () => {
       removeArrayTestHand.removeCardArrayFromHand(secondArrayToRemove);
       expect(removeArrayTestHand.getCards().length).to.equal(0);
       expect(removeArrayTestHand.getCards()).to.deep.equal([]);
+    });
+  });
+
+  describe('moveHandCardToLeftovers', () => {
+    // Arrange
+    const cardsForHand5 = [cardD13, cardH13, cardS3, cardS4, cardS5];
+    const hand5Cards = new Hand(cardsForHand5);
+    const leftoversBefore = [cardJ, cardD4];
+    leftoversBefore.forEach((card) => {
+      hand5Cards.addToLeftovers(card);
+    });
+
+    it('throws error if card is not in hand', () => {
+      const failedRemoval = cardD6;
+      const expectedError = ``;
+      expect(() => hand5Cards.moveHandCardToLeftovers(failedRemoval)).to.throw(expectedError);
+      expect(hand5Cards.getLeftovers()).to.deep.equal(leftoversBefore);
+      expect(hand5Cards.getCards()).to.deep.equal(cardsForHand5);
+    });
+
+    it('removes card from hand and adds to leftovers', () => {
+      const cardToRemove = cardD13;
+      const handCardsAfterRemoval = [cardH13, cardS3, cardS4, cardS5];
+      const leftoversAfterRemoval = [cardJ, cardD4, cardD13];
+      hand5Cards.moveHandCardToLeftovers(cardToRemove);
+      expect(hand5Cards.getCards()).to.deep.equal(handCardsAfterRemoval);
+      expect(hand5Cards.getLeftovers()).to.deep.equal(leftoversAfterRemoval);
     });
   });
 });

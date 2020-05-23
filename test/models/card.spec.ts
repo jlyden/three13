@@ -10,16 +10,18 @@ describe('card methods', () => {
     const invalidValue = 2;
     it('throws error if invalid suit is passed', () => {
       const validValue = 8;
-      expect(() => new Card(invalidSuit, validValue)).to.throw(`Invalid suit or value: ${invalidSuit}, ${validValue}`)
+      expect(() => new Card(invalidSuit, validValue)).to.throw(`Invalid suit or value: ${invalidSuit}, ${validValue}`);
     });
 
     it('throws error if invalid value is passed', () => {
       const validSuit = 'Spades';
-      expect(() => new Card(validSuit, invalidValue)).to.throw(`Invalid suit or value: ${validSuit}, ${invalidValue}`)
+      expect(() => new Card(validSuit, invalidValue)).to.throw(`Invalid suit or value: ${validSuit}, ${invalidValue}`);
     });
 
     it('throws error if invalid suit and value are passed', () => {
-      expect(() => new Card(invalidSuit, invalidValue)).to.throw(`Invalid suit or value: ${invalidSuit}, ${invalidValue}`)
+      expect(() => new Card(invalidSuit, invalidValue)).to.throw(
+        `Invalid suit or value: ${invalidSuit}, ${invalidValue}`,
+      );
     });
   });
 
@@ -36,10 +38,9 @@ describe('card methods', () => {
       ['Jack', 'Diamonds', 11],
       ['Queen', 'Hearts', 12],
       ['King', 'Clubs', 13],
-    ]
-    
-    forEach(testCases)
-    .it('displays %s as expected', (faceCardName, suit, value) => {
+    ];
+
+    forEach(testCases).it('displays %s as expected', (faceCardName, suit, value) => {
       const expectedToString = `<${faceCardName} of ${suit}>`;
       const faceCard = new Card(suit, value);
       expect(faceCard.toString()).to.equal(expectedToString);
@@ -48,6 +49,5 @@ describe('card methods', () => {
     it('displays face card as expected', () => {
       expect(new Card('Hearts', 12).toString()).to.equal('<Queen of Hearts>');
     });
-
   });
 });

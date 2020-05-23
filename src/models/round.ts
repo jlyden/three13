@@ -56,8 +56,8 @@ export class Round {
     const handIndex = this.getCurrentPlayerIndex();
 
     try {
-    // Remove specified card and set it to visibleCard
-    this.visibleCard = this.hands[handIndex].remove(card);
+      // Remove specified card and set it to visibleCard
+      this.visibleCard = this.hands[handIndex].remove(card);
 
       // Set up for next player turn
       this.setNextCurrentPlayer();

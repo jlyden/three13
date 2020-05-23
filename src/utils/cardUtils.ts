@@ -38,8 +38,7 @@ export function sortValuesIntoRuns(singleSuitCards: Card[]) {
 }
 
 export function reduceCardsByValue(cards: Card[]) {
-  const reducedValues: { [key: string]: number } = 
-  cards.reduce((tally: { [key: string]: number }, card: Card) => {
+  const reducedValues: { [key: string]: number } = cards.reduce((tally: { [key: string]: number }, card: Card) => {
     tally[card.value] = tally[card.value] + 1 || 1;
     return tally;
   }, {});
