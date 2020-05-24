@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { Card } from '../models';
+import { Card, CardGroup } from '../models';
 
-export function transformRunArrayIntoCardArray(runArray: number[], suit: string): Card[] {
-  const cardArray: Card[] = [];
+export function transformRunArrayIntoCardGroup(runArray: number[], suit: string): CardGroup {
+  const group = new CardGroup();
   runArray.forEach((value) => {
-    cardArray.push(new Card(suit, value));
+    group.addMany([new Card(suit, value)]);
   });
-  return cardArray;
+  return group;
 }
 
 /**
@@ -15,9 +15,9 @@ export function transformRunArrayIntoCardArray(runArray: number[], suit: string)
  * @returns array of arrays of consecutive values, i.e. [[4,5], [7,8,9] [12]]
  * Ref: http://stackoverflow.com/questions/7352684/how-to-find-the-groups-of-consecutive-elements-from-an-array-in-numpy
  */
-export function sortValuesIntoRuns(singleSuitCards: Card[]) {
+export function sortValuesIntoRuns(singleSuitCards: CardGroup): number[][] {
   // Pull out values of this suit and sort them
-  const valuesArray = singleSuitCards.map((a) => a.value);
+  const valuesArray = singleSuitCards.getCards().map((a) => a.value);
   valuesArray.sort((a, b) => a - b);
 
   let run: number[] = [];

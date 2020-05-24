@@ -48,6 +48,31 @@ https://www.taniarascia.com/create-a-simple-database-app-connecting-to-mysql-wit
 https://catswhocode.com/phpcache/
 https://www.web-development-blog.com/why-should-you-cache-your-php-website/
 
+------------------------------------------------------------------
+CardGroup
+add(card)
+remove(card)
+move(card, target: CardGroup) {
+  remove(card)
+  target.add(card)
+}
+getCards()
+toString()
+
+Deck extends CardGroup
+shuffle()
+dealOneCard()
+assemble()
+
+Hand extends CardGroup
+evaluateHand()
+findFilteredCards()
+findWildCards()
+removeValidRunsFromHand()
+removeCardArrayFromHand()
+
+Leftovers extends CardGroup
+
 
 ------------------------------------------------------------------
 Logic for checking gin rummy hand from https://github.com/jlyden/straight-gin/blob/master/utils.py#L60

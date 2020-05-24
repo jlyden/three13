@@ -1,7 +1,7 @@
 import chai from 'chai';
 import _ from 'lodash';
 import { Card } from '../../src/models';
-import { transformRunArrayIntoCardArray, sortValuesIntoRuns } from '../../src/utils';
+import { transformRunArrayIntoCardGroup, sortValuesIntoRuns } from '../../src/utils';
 import { cardS3, cardS4, cardS5, cardS6, cardS9, cardH13 } from '../common/testData';
 
 const { expect } = chai;
@@ -14,7 +14,7 @@ describe('utils: cardUtils methods', () => {
       const testSuit = 'Spades';
       const testRunArray = [4, 5, 6];
 
-      const actualCardArray = transformRunArrayIntoCardArray(testRunArray, testSuit);
+      const actualCardArray = transformRunArrayIntoCardGroup(testRunArray, testSuit);
       expect(actualCardArray).to.deep.equal(expectedCardArray);
     });
   });

@@ -1,23 +1,18 @@
-import { Card } from '../models';
+import { Card, CardGroup } from '../models';
 
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
-export class Deck {
-  private cards: Card[];
-
+export class Deck extends CardGroup {
   constructor() {
+    super();
     this.assemble();
   }
 
-  public getCards(): Card[] {
-    return this.cards;
-  }
-
   public shuffle(): Deck {
-    const { cards } = this;
+    const { group } = this;
 
     // Start with end of deck
-    let cardCountdown = cards.length;
+    let cardCountdown = this.length();
     let cardToSwap: number;
 
     while (cardCountdown) {
@@ -25,32 +20,25 @@ export class Deck {
       cardToSwap = Math.floor(Math.random() * cardCountdown--);
 
       // and swap with value from end of deck
-      [cards[cardCountdown], cards[cardToSwap]] = [cards[cardToSwap], cards[cardCountdown]];
+      [group[cardCountdown], group[cardToSwap]] = [group[cardToSwap], group[cardCountdown]];
     }
 
     return this;
   }
 
-  public dealOneCard() {
-    return this.cards.pop();
-  }
-
   private assemble(): Deck {
-    this.cards = [];
-
-    // tslint:disable-next-line: forin
-    for (const suit in Card.SUITS) {
-      if (Card.SUITS[suit] !== 'Joker') {
+    for (const suit of Card.SUITS) {
+      if (suit !== 'Joker') {
         // tslint:disable-next-line: forin
-        for (const value in Card.VALUES) {
-          const card = new Card(Card.SUITS[suit], Card.VALUES[value]);
-          this.cards.push(card);
+        for (const value of Card.VALUES) {
+          const card = new Card(suit, value);
+          this.addMany([card]);
         }
       }
     }
     // Add two Jokers, this is 313
-    this.cards.push(new Card('Joker', 3));
-    this.cards.push(new Card('Joker', 4));
+    this.addMany([new Card('Joker', 3)]);
+    this.addMany([new Card('Joker', 4)]);
     return this;
   }
 }

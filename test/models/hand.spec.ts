@@ -31,16 +31,16 @@ describe('hand methods', () => {
 
   describe('add', () => {
     it('adds a card to an empty hand', () => {
-      genericTestHand.add(cardJ);
+      genericTestHand.addMany(cardJ);
       handWithOneCard = _.cloneDeep(genericTestHand);
 
       expect(genericTestHand.getCards().length).to.equal(1);
     });
 
     it('adds cards to non-empty hand', () => {
-      genericTestHand.add(cardD4);
+      genericTestHand.addMany(cardD4);
       handWithTwoCards = _.cloneDeep(genericTestHand);
-      genericTestHand.add(cardD5);
+      genericTestHand.addMany(cardD5);
 
       expect(genericTestHand.getCards().length).to.equal(3);
     });

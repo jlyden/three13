@@ -26,7 +26,7 @@ export class Round {
   // NOTE: User button - 'Start Round'
   public startRound() {
     this.deal();
-    this.visibleCard = this.deck.dealOneCard();
+    this.visibleCard = this.deck.pop();
     this.setFirstPlayerForRound();
   }
 
@@ -34,7 +34,7 @@ export class Round {
   public takeVisibleCard() {
     // Get current user's hand and add visibleCard to it
     const handIndex = this.getCurrentPlayerIndex();
-    this.hands[handIndex].add(this.visibleCard);
+    this.hands[handIndex].addMany(this.visibleCard);
 
     this.visibleCard = null;
     this.setMessage(this.currentPlayer.nickname + discardMessage);
@@ -44,7 +44,7 @@ export class Round {
   public drawFromDeck() {
     // Get current user's hand and add card from deck to it
     const handIndex = this.getCurrentPlayerIndex();
-    this.hands[handIndex].add(this.deck.dealOneCard());
+    this.hands[handIndex].addMany(this.deck.pop());
 
     // Remind user to discard
     this.setMessage(this.currentPlayer.nickname + discardMessage);
@@ -90,7 +90,7 @@ export class Round {
       // loop through userCount
       for (let j = 0; j < userCount; j++) {
         // pull card from deck, add it to hand
-        this.hands[j].add(this.deck.dealOneCard());
+        this.hands[j].addMany(this.deck.pop());
       }
     }
   }

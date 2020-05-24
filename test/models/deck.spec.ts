@@ -6,6 +6,40 @@ import { reduceCardsByValue } from '../../src/utils/cardUtils';
 const { expect } = chai;
 
 describe('deck methods', () => {
+  describe('shuffle', () => {
+    it('mixes up a deck of cards', () => {
+      const testDeck = new Deck();
+      const beforeDeck = _.cloneDeep(testDeck);
+      testDeck.shuffle();
+      expect(testDeck).to.not.deep.equal(beforeDeck);
+    });
+  });
+
+  describe('dealOneCard', () => {
+    const testDeck = new Deck();
+
+    it('removes the final element from the deck - Joker', () => {
+      const dealtCardOne = testDeck.dealOneCard();
+      const expectedCardOne = new Card('Joker', 4);
+      expect(testDeck.getCards().length).to.equal(45);
+      expect(dealtCardOne).to.deep.equal(expectedCardOne);
+    });
+
+    it('remove element -2 from deck', () => {
+      const dealtCardTwo = testDeck.dealOneCard();
+      const expectedCardTwo = new Card('Joker', 3);
+      expect(testDeck.getCards().length).to.equal(44);
+      expect(dealtCardTwo).to.deep.equal(expectedCardTwo);
+    });
+
+    it('remove element -3 from deck', () => {
+      const dealtCardThree = testDeck.dealOneCard();
+      const expectedCardThree = new Card('Spades', 13);
+      expect(testDeck.getCards().length).to.equal(43);
+      expect(dealtCardThree).to.deep.equal(expectedCardThree);
+    });
+  });
+
   describe('assemble', () => {
     const testDeck = new Deck();
 
@@ -38,40 +72,6 @@ describe('deck methods', () => {
       // Because of how we handle Jokers, there are 5 '3' and 5 '4' cards
       expect(arrayOfValueCounts).to.deep.equal([5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4]);
       expect(arrayOfValues).to.have.members(['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']);
-    });
-  });
-
-  describe('shuffle', () => {
-    it('mixes up a deck of cards', () => {
-      const testDeck = new Deck();
-      const beforeDeck = _.cloneDeep(testDeck);
-      testDeck.shuffle();
-      expect(testDeck).to.not.deep.equal(beforeDeck);
-    });
-  });
-
-  describe('dealOneCard', () => {
-    const testDeck = new Deck();
-
-    it('removes the final element from the deck - Joker', () => {
-      const dealtCardOne = testDeck.dealOneCard();
-      const expectedCardOne = new Card('Joker', 4);
-      expect(testDeck.getCards().length).to.equal(45);
-      expect(dealtCardOne).to.deep.equal(expectedCardOne);
-    });
-
-    it('remove element -2 from deck', () => {
-      const dealtCardTwo = testDeck.dealOneCard();
-      const expectedCardTwo = new Card('Joker', 3);
-      expect(testDeck.getCards().length).to.equal(44);
-      expect(dealtCardTwo).to.deep.equal(expectedCardTwo);
-    });
-
-    it('remove element -3 from deck', () => {
-      const dealtCardThree = testDeck.dealOneCard();
-      const expectedCardThree = new Card('Spades', 13);
-      expect(testDeck.getCards().length).to.equal(43);
-      expect(dealtCardThree).to.deep.equal(expectedCardThree);
     });
   });
 });

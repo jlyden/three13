@@ -1,329 +1,155 @@
 import _ from 'lodash';
-import { Card } from '../models';
-import { transformRunArrayIntoCardArray, sortValuesIntoRuns } from '../utils';
-import { reduceCardsByValue, removeValueFromArray } from '../../src/utils/cardUtils';
+import { Card, CardGroup } from '../models';
+import {
+  reduceCardsByValue,
+  removeValueFromArray,
+  sortValuesIntoRuns as sortCardValuesIntoRuns,
+  transformRunArrayIntoCardGroup
+} from '../utils';
 
-export class Hand {
-  // A run or multiple set must have at least 3 cards in it
+export class Hand extends CardGroup {
+  // A run or set must have at least 3 cards in it
   static MINIMUM_SET = 3;
 
-  private cards: Card[];
-
-  // Variables for evaluating the hand at end of game
-  private processedCards: Card[][];
-  private longRuns: Card[][];
-  private leftovers: Card[];
+  // For evaluating the hand at end of game
+  private processedCards: CardGroup[];
+  private longRuns: CardGroup[];
 
   constructor(cardsToAdd?: Card[]) {
-    if (cardsToAdd) {
-      this.cards = cardsToAdd;
-    } else {
-      this.cards = [];
-    }
-
+    super(cardsToAdd);
     this.processedCards = [];
     this.longRuns = [];
-    this.leftovers = [];
-  }
-
-  public getCards(): Card[] {
-    return this.cards;
-  }
-
-  public getProcessedCards(): Card[][] {
-    return this.processedCards;
-  }
-
-  public getLongRuns(): Card[][] {
-    return this.longRuns;
-  }
-
-  public getLeftovers(): Card[] {
-    return this.leftovers;
-  }
-
-  public addToLeftovers(card: Card) {
-    this.leftovers.push(card);
-  }
-
-  public toString() {
-    let stringHand = '[';
-    if (this.cards.length > 0) {
-      // tslint:disable-next-line: forin
-      for (const card in this.cards) {
-        stringHand += `${this.cards[card].toString()}, `;
-      }
-    }
-    if (stringHand.slice(-2) === ', ') {
-      stringHand = stringHand.substring(0, stringHand.length - 2);
-    }
-    stringHand += ']';
-    return stringHand;
-  }
-
-  public add(card: Card) {
-    this.cards.push(card);
-  }
-
-  public remove(card: Card): Card {
-    const cardIndex = _.findIndex(this.cards, {
-      suit: card.suit,
-      value: card.value,
-    });
-
-    // If card is in hand, remove and return it
-    if (cardIndex !== -1) {
-      const removeArray = _.pullAt(this.cards, [cardIndex]);
-      return removeArray[0];
-    } else {
-      throw new Error(`Attempted discard ${card.toString()} not in hand.`);
-    }
   }
 
   /**
    * Ensure this is a valid 313 hand
-   * @param round - current round of game, b/c that determines which cards are wild
+   * @param round - current round of game, for determining wilds
    */
   public evaluateHand(round: number) {
-    // TODO: Wrap everything to line 105 in method 'processRunsFromHand()'
-    // Look for runs within each suit
+    this.processRunsFromHand(round);
+    this.processSetsFromHand(round);
+    // calculate penalty based on what remains in hand - add extra wilds to any run/set
+  }
+
+  /**
+   * Move valid runs from each suit out of hand
+   * Leave spare cards in hand for set processing
+   * @param round - current round of game, for determining wilds
+   * TODO: private/rewire
+   */
+  public processRunsFromHand(round: number) {
     for (const suit of Card.SUITS) {
-      // Ignore Jokers as 'suit'
       if (suit === 'Joker') {
         continue;
       }
-
       const cardsOfSuit = this.findFilteredCards(suit);
 
-      // If there are at least 3 cards in the suit
-      if (cardsOfSuit.length >= Hand.MINIMUM_SET) {
-        // Sort cards into consecutive runs (of whatever length)
-        const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
-        this.removeValidRunsFromHand(suit, sortedRuns, round);
-      } else {
-        // If too few cards in suit for a run, add cards to leftovers
-        cardsOfSuit.forEach((card) => {
-          this.leftovers.push(card);
-        });
+      if (cardsOfSuit.length() >= Hand.MINIMUM_SET) {
+        const sortedRuns = sortCardValuesIntoRuns(cardsOfSuit);
+        this.removeValidRunsFromHand(round, sortedRuns, suit);
       }
     }
-
-    // Prepare to process sets
-    this.moveLeftoversBackToHand();
-    this.processSetsFromHand(round);
-
-    // check leftovers for sets of duplicate numbers
-    // (twice ?? in case of buried last cards)
-
-    // calculate penalty based on what remains in leftovers
   }
 
   /**
-   * Returns new array of cards matching the param
-   * @param matcher 'value' or 'suit' to be filtered on
-   *
-   * Note: This does not remove cards from hand
-   * TODO: Make private, use rewire for testing
+   * @param matcher 'suit' or 'value' to be filtered by
+   * @return CardGroup matching param
+   * Does not remove cards from hand
+   * TODO: private/rewire
    */
-  public findFilteredCards(matcher: string | number): Card[] {
-    let matchingArray: Card[];
+  public findFilteredCards(matcher: string | number): CardGroup {
+    const matchingGroup = new CardGroup();
     if (typeof matcher === 'string') {
-      matchingArray = _.filter(this.cards, {
-        suit: matcher,
-      });
+      matchingGroup.addMany(_.filter(this.getCards(), { suit: matcher }));
     } else if (typeof matcher === 'number') {
-      matchingArray = _.filter(this.cards, {
-        value: matcher,
-      });
+      matchingGroup.addMany(_.filter(this.getCards(), { value: matcher }));
     }
-    return matchingArray;
+    return matchingGroup;
   }
 
   /**
-   * @param round - cards where value === round are wild, as are Jokers
-   * @return array of Wild Cards
-   *
-   * Note: This does not remove cards from hand
-   * TODO: Make private, use rewire for testing
+   * @param round - current round of game, for determining wilds
+   * @return CardGroup of Wild Cards
+   * Does not remove cards from hand
+   * TODO: private/rewire
    */
-  public findWildCards(round: number): Card[] {
-    return this.findFilteredCards('Joker').concat(this.findFilteredCards(round));
+  public findWildCards(round: number): CardGroup {
+    const wildsArray = this.findFilteredCards('Joker');
+    wildsArray.addMany(this.findFilteredCards(round).getCards());
+    return wildsArray;
   }
 
   /**
    * For all runs in suit,
-   *  - adds valid 3 card runs to processed cards
-   *  - adds valid 4+ card runs to long runs
-   *  - attempts to supplement 1 or 2 card runs with wilds (and add to processed)
-   *  - dump whatever remains into leftovers for later set processing
+   *  - add valid 3 card runs to processed cards
+   *  - add valid 4+ card runs to long runs
+   *  - attempt to supplement 1 or 2 card runs with wilds (and add to processed)
+   *  - leave whatever remains in hand for later set processing
    *
    * @param suit to which all cards in runs belong
-   * @param sortedRuns consecutive runs of integers
+   * @param sortedRuns array of consecutive runs of integers
    * @param round current game round
-   *
-   * TODO: Make private, use rewire for testing
+   * TODO: private/rewire
    */
-  public removeValidRunsFromHand(suit: string, sortedRuns: number[][], round: number) {
+  public removeValidRunsFromHand(round: number, sortedRuns: number[][], suit: string) {
     sortedRuns.forEach((run) => {
-      if (run.length === Hand.MINIMUM_SET) {
+      const group = transformRunArrayIntoCardGroup(run, suit);
+      if (group.length() === Hand.MINIMUM_SET) {
         // If 3 card run, move to processed
-        const cardArray = transformRunArrayIntoCardArray(run, suit);
-        this.processedCards.push(cardArray);
-        this.removeCardArrayFromHand(cardArray);
-      } else if (run.length > Hand.MINIMUM_SET) {
-        // If greater than 3 card run, move to longRuns to help with sets later
-        const cardArray = transformRunArrayIntoCardArray(run, suit);
-        this.longRuns.push(cardArray);
-        this.removeCardArrayFromHand(cardArray);
+        this.moveGroupToGroupArray(group, this.processedCards);
+      } else if (group.length() > Hand.MINIMUM_SET) {
+        // If 4+ card run, move to longRuns to help with sets later
+        this.moveGroupToGroupArray(group, this.longRuns);
       } else {
-        // If less than 3 card run, check if missing cards can be made up from wilds
-        const missingCardCount = Hand.MINIMUM_SET - run.length;
-        const wildCards: Card[] = this.findWildCards(round);
-        if (wildCards.length >= missingCardCount) {
-          // Build card array from what you have
-          const cardArray = transformRunArrayIntoCardArray(run, suit);
-
-          // Add the wild cards needed to make up what is missing
-          for (let i = 0; i < missingCardCount; i++) {
-            cardArray.push(wildCards[i]);
-          }
-
-          // Add set with wilds to processed Cards as with 3 card run above
-          this.processedCards.push(cardArray);
-          this.removeCardArrayFromHand(cardArray);
-        } else {
-          // But if there aren't enough wilds to help, throw these cards in leftovers to help with sets later
-          run.forEach((value) => {
-            const cardToRemove: Card = new Card(suit, value);
-            try {
-              this.moveHandCardToLeftovers(cardToRemove);
-            } catch (error) {
-              // TODO: Now what? somehow we tried to remove a card that isn't there
-            }
-          });
-        }
+        // If less than 3 card run, try make up difference from from wilds
+        this.completeGroupWithWilds(group, round);
       }
-    });
-  }
-
-  // TODO: Make private, use rewire for testing
-  public removeCardArrayFromHand(cardArray: Card[]) {
-    cardArray.forEach((card) => {
-      this.remove(card);
-    });
-  }
-
-  // TODO: Make private, use rewire for testing
-  public moveLeftoversBackToHand() {
-    this.leftovers.forEach((card) => {
-      this.add(card);
-    });
+      // If we can't make it up with wilds, leave cards in hand
+      }
+    );
   }
 
   /**
-   * Runs are already removed from hand, these are just 'leftovers'
-   * Sort & group hand by number
-   * Remove sets of 3 or 4 cards of same value
-   * Look in long_runs (where run > 3) for completion cards for 1 or 2 card sets
-   * Consider wilds to make up what is still missing
-   * TODO: Make private, use rewire for testing
+   * For all number sets left in hand,
+   *  - move sets of 3+ cards to processed cards
+   *  - look in longRuns for help for 1 or 2 card sets
+   *  - use wilds for help if still needed
+   * TODO: private/rewire
    */
   public processSetsFromHand(round: number) {
-    // Get hand values excluding wild for round, sorted desc
+    // Get values present in hand (excluding wild), sorted desc
     const valuesDescWithoutWilds = removeValueFromArray(this.getValuesFromHand(), round);
 
-    // Filter hand by value, but don't consider round wilds
+    // Loop through values, attempting to make sets of at least three cards
     for (const value of valuesDescWithoutWilds) {
       const cardsOfValue = this.findFilteredCards(value);
 
-      // TODO: There's a lot of repetition here - fix it
-      // If set.length >= 3, add to processed cards
-      if (cardsOfValue.length >= Hand.MINIMUM_SET) {
-        this.processedCards.push(cardsOfValue);
-        this.removeCardArrayFromHand(cardsOfValue);
+      // If there are already 3+ cards in a set, move to processed
+      if (cardsOfValue.length() >= Hand.MINIMUM_SET){
+        this.moveGroupToGroupArray(cardsOfValue, this.processedCards);
       } else {
-        // Look for help in long runs
-        const longRunsCount = this.longRuns.length;
-        for (let i = 0; i < longRunsCount; i++) {
-          const longRunCount = this.longRuns[i].length;
-          // Try match higher value first
-          if (this.longRuns[i][longRunCount - 1].value === value) {
-            // Move card
-            const removedCard = _.pullAt(this.longRuns[i], [-1])[0];
-            cardsOfValue.push(removedCard);
+        // Try make up missing cards from the end of a longRun
+        let finished = this.completeSetWithLongRunsHelp(cardsOfValue, -1);
 
-            // If that finishes the set
-            if (cardsOfValue.length === Hand.MINIMUM_SET) {
-              // Move set to processed cards
-              this.processedCards.push(cardsOfValue);
-
-              // Move long run to processed cards if it's no longer long
-              if (longRunCount - 1 === Hand.MINIMUM_SET) {
-                // remove longRun From longRuns
-                const removedLongRun = _.pullAt(this.longRuns, i)[0];
-                // add longRun to processed
-                this.processedCards.push(removedLongRun);
-              }
-              break;
-            }
-          } else if (this.longRuns[i][0].value === value) {
-            // Move card
-            const removedCard = _.pullAt(this.longRuns[i], [0])[0];
-            cardsOfValue.push(removedCard);
-
-            // If that finishes the set
-            if (cardsOfValue.length === Hand.MINIMUM_SET) {
-              // Move set to processed cards
-              this.processedCards.push(cardsOfValue);
-
-              // Move long run to processed cards if it's no longer long
-              if (longRunCount - 1 === Hand.MINIMUM_SET) {
-                // remove longRun From longRuns
-                const removedLongRun = _.pullAt(this.longRuns, i)[0];
-                // add longRun to processed
-                this.processedCards.push(removedLongRun);
-              }
-              break;
-            }
-            // If single value from longRun doesn't complete set, we keep looping
-          }
+        // If still < 3 cards, try make up from the front of a longRun
+        if (!finished) {
+          finished = this.completeSetWithLongRunsHelp(cardsOfValue, 0);
         }
-        // QUESTION: if we break after pushing cardsOfValue to processed,
-        //           can we still end up here? If so, need to bail
-
-        // If we didn't break out, set isn't complete yet - check wilds
-        // Find whatever wilds are left
-        const wildCards: Card[] = this.findWildCards(round);
-        const neededCards = Hand.MINIMUM_SET - cardsOfValue.length;
-        // If we have enough wild cards to complete set, do it
-        if (wildCards.length >= neededCards) {
-          do {
-            // move wildcard from hand to cardsOfValue
-            const wildCard = this.remove(wildCards.pop());
-            cardsOfValue.push(wildCard);
-          } while (cardsOfValue.length < Hand.MINIMUM_SET);
-
-          // Now move completed set to processedCards
-          this.processedCards.push(cardsOfValue);
+        // If still < 3 cards, try make up with wild cards
+        if (!finished) {
+          this.completeGroupWithWilds(cardsOfValue, round);
         }
-
-        // Same QUESTION as before
-        // If we couldn't complete set with longRuns or wilds,
-        // push to leftovers for calculations
-        cardsOfValue.forEach((card) => {
-          try {
-            this.moveHandCardToLeftovers(card);
-          } catch (error) {
-            // TODO: Now what? somehow we tried to remove a card that isn't there
-          }
-        });
+        // If we can't make it up with wilds, leave cards in hand
       }
     }
   }
 
-  // TODO: Make private, use rewire for testing
-  public getValuesFromHand() {
-    const cardsReducedArray = reduceCardsByValue(this.cards);
+  /**
+   * @return array of numerical values of cards in hand, i.e. [4, 7, 12]
+   * TODO: private/rewire
+   */
+  public getValuesFromHand(): number[] {
+    const cardsReducedArray = reduceCardsByValue(this.getCards());
     // NOTE: I don't think this array will have 0s in it. check
     const valuesArray = Object.keys(cardsReducedArray).map((v) => Number(v));
     valuesArray.sort((a, b) => {
@@ -332,13 +158,59 @@ export class Hand {
     return valuesArray;
   }
 
-  // TODO: Make private, use rewire for testing
-  public moveHandCardToLeftovers(card: Card) {
-    try {
-      this.remove(card);
-      this.addToLeftovers(card);
-    } catch (error) {
-      throw Error(error.message);
+  /**
+   * LongRuns could lose a card from the end and still be a valid group
+   * This method plucks matching extra cards to try complete a set
+   * @param cardsOfValue cards from hand sharing a value
+   * @param index -1 or 0, the final or first card in a longRun
+   * @return true if the set was completed; false if not
+   */
+  public completeSetWithLongRunsHelp(cardsOfValue: CardGroup, index: number): boolean {
+    // Determine the value that is sought
+    const value = cardsOfValue.getCardAt(0).value;
+    const longRunsLength = this.longRuns.length;
+
+    // Loop through all longRuns already plucked from hand
+    for (let i = 0; i < longRunsLength; i++) {
+      const potentialMatch: Card = this.longRuns[i].getCardAt(index);
+      // If edge card from longRun matches, move to value set
+      if (potentialMatch.value === value) {
+        this.longRuns[i].move(potentialMatch, cardsOfValue);
+
+        // If that match completes the set, move set and stop looping
+        if (cardsOfValue.length() === Hand.MINIMUM_SET) {
+          this.moveGroupToGroupArray(cardsOfValue, this.processedCards);
+
+          // If longRun is no longer 'long', move to processed cards
+          if (this.longRuns[i].length() === Hand.MINIMUM_SET) {
+            this.processedCards.push(_.pullAt(this.longRuns, i)[0]);
+          }
+          return true;
+        }
+      }
     }
+    // If we got here, longRuns at index did not finish our set
+    return false;
+  }
+
+  /**
+   * 
+   * @param group potential run or set with length < Hand.MINIMUM_SET
+   * @param round - current round of game, for determining wilds
+   */
+  public completeGroupWithWilds(group: CardGroup, round: number) {
+    const missingCardCount = Hand.MINIMUM_SET - group.length();
+    const wildCards = this.findWildCards(round);
+
+    // If there are enough wilds to complete the group, add them
+    if (wildCards.length() >= missingCardCount) {
+      do {
+        group.add(wildCards.pop());
+      } while (group.length() < Hand.MINIMUM_SET);
+
+      // Add group with wilds to processed
+      this.moveGroupToGroupArray(group, this.processedCards);
+    }
+    // If not, leave cards (including wilds) in hand
   }
 }
