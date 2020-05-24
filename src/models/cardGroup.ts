@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Card } from '../models';
 
 export class CardGroup {
-  private group: Card[];
+  protected group: Card[];
 
   constructor(cardsToAdd?: Card[]) {
     if (cardsToAdd) {

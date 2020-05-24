@@ -4,6 +4,7 @@ export class Card {
   suit: string;
   value: number;
 
+  // TOOD: Suits and Values as enums?
   static SUITS: string[] = ['Clubs', 'Diamonds', 'Hearts', 'Spades', 'Joker'];
   static VALUES: number[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 

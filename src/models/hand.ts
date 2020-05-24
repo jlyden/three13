@@ -12,8 +12,9 @@ export class Hand extends CardGroup {
   static MINIMUM_SET = 3;
 
   // For evaluating the hand at end of game
-  private processedCards: CardGroup[];
-  private longRuns: CardGroup[];
+  // TODO: private/rewire
+  public processedCards: CardGroup[];
+  public longRuns: CardGroup[];
 
   constructor(cardsToAdd?: Card[]) {
     super(cardsToAdd);
@@ -26,9 +27,10 @@ export class Hand extends CardGroup {
    * @param round - current round of game, for determining wilds
    */
   public evaluateHand(round: number) {
+    // TODO: Quick win if hand is all wild cards
     this.processRunsFromHand(round);
     this.processSetsFromHand(round);
-    // calculate penalty based on what remains in hand - add extra wilds to any run/set
+    // TODO: calculate penalty based on what remains in hand - add extra wilds to any run/set
   }
 
   /**

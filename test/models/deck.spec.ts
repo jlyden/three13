@@ -15,31 +15,6 @@ describe('deck methods', () => {
     });
   });
 
-  describe('dealOneCard', () => {
-    const testDeck = new Deck();
-
-    it('removes the final element from the deck - Joker', () => {
-      const dealtCardOne = testDeck.dealOneCard();
-      const expectedCardOne = new Card('Joker', 4);
-      expect(testDeck.getCards().length).to.equal(45);
-      expect(dealtCardOne).to.deep.equal(expectedCardOne);
-    });
-
-    it('remove element -2 from deck', () => {
-      const dealtCardTwo = testDeck.dealOneCard();
-      const expectedCardTwo = new Card('Joker', 3);
-      expect(testDeck.getCards().length).to.equal(44);
-      expect(dealtCardTwo).to.deep.equal(expectedCardTwo);
-    });
-
-    it('remove element -3 from deck', () => {
-      const dealtCardThree = testDeck.dealOneCard();
-      const expectedCardThree = new Card('Spades', 13);
-      expect(testDeck.getCards().length).to.equal(43);
-      expect(dealtCardThree).to.deep.equal(expectedCardThree);
-    });
-  });
-
   describe('assemble', () => {
     const testDeck = new Deck();
 
