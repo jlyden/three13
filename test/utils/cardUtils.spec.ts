@@ -1,6 +1,6 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { Card, CardGroup } from '../../src/models';
+import { Card, CardGroup, Suit } from '../../src/models';
 import { transformRunArrayIntoCardGroup, sortValuesIntoRuns } from '../../src/utils';
 import { cardS3, cardS4, cardS5, cardS6, cardS9, cardH13 } from '../common/testData';
 
@@ -11,7 +11,7 @@ describe('utils: cardUtils methods', () => {
   describe('transformRunArrayIntoCardGroup', () => {
     it('properly completes transformation', () => {
       const expectedGroup = new CardGroup([cardS4, cardS5, cardS6]);
-      const testSuit = 'Spades';
+      const testSuit = Suit.Spades;
       const testRunArray = [4, 5, 6];
 
       const actualCardArray = transformRunArrayIntoCardGroup(testRunArray, testSuit);

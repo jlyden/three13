@@ -1,6 +1,6 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { Card, Deck, Hand } from '../../src/models';
+import { Card, Deck, Hand, Suit } from '../../src/models';
 import {
   cardJ,
   cardD4,
@@ -65,7 +65,7 @@ describe('CardGroup methods', () => {
 
   describe('remove', () => {
     it('throws error when trying to remove a card not in hand', () => {
-      const badDiscard = new Card('Spades', 5);
+      const badDiscard = new Card(Suit.Spades, 5);
       const expectedError = 'Remove Error: <5 of Spades> not in group.';
       expect(() => genericTestHand.remove(badDiscard)).to.throw(expectedError);
       expect(genericTestHand.getCards().length).to.equal(3);
@@ -100,21 +100,21 @@ describe('CardGroup methods', () => {
 
     it('removes the final element from the deck - Joker', () => {
       const dealtCardOne = testDeck.pop();
-      const expectedCardOne = new Card('Joker', 4);
+      const expectedCardOne = new Card(Suit.Joker, 4);
       expect(testDeck.getCards().length).to.equal(45);
       expect(dealtCardOne).to.deep.equal(expectedCardOne);
     });
 
     it('remove element -2 from deck', () => {
       const dealtCardTwo = testDeck.pop();
-      const expectedCardTwo = new Card('Joker', 3);
+      const expectedCardTwo = new Card(Suit.Joker, 3);
       expect(testDeck.getCards().length).to.equal(44);
       expect(dealtCardTwo).to.deep.equal(expectedCardTwo);
     });
 
     it('remove element -3 from deck', () => {
       const dealtCardThree = testDeck.pop();
-      const expectedCardThree = new Card('Spades', 13);
+      const expectedCardThree = new Card(Suit.Spades, 13);
       expect(testDeck.getCards().length).to.equal(43);
       expect(dealtCardThree).to.deep.equal(expectedCardThree);
     });

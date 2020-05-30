@@ -1,6 +1,6 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { Card, Deck } from '../../src/models';
+import { Card, Deck, Suit } from '../../src/models';
 import { reduceCardsByValue } from '../../src/utils/cardUtils';
 
 const { expect } = chai;
@@ -33,7 +33,7 @@ describe('deck methods', () => {
       const arrayOfSuits: string[] = Object.keys(reducedSuits);
 
       expect(arrayOfSuitCounts.length).to.equal(5);
-      expect(arrayOfSuits).to.have.members(['Clubs', 'Diamonds', 'Hearts', 'Spades', 'Joker']);
+      expect(arrayOfSuits).to.have.members(Object.values(Suit));
       expect(arrayOfSuitCounts).to.deep.equal([11, 11, 11, 11, 2]);
     });
 

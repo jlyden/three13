@@ -1,4 +1,4 @@
-import { Card, CardGroup } from '../models';
+import { Card, CardGroup, Suit } from '../models';
 
 // Based on https://wsvincent.com/javascript-object-oriented-deck-cards/
 
@@ -27,8 +27,8 @@ export class Deck extends CardGroup {
   }
 
   private assemble(): Deck {
-    for (const suit of Card.SUITS) {
-      if (suit !== 'Joker') {
+    for (const suit of Object.values(Suit)) {
+      if (suit !== Suit.Joker) {
         // tslint:disable-next-line: forin
         for (const value of Card.VALUES) {
           const card = new Card(suit, value);
@@ -37,8 +37,8 @@ export class Deck extends CardGroup {
       }
     }
     // Add two Jokers, this is 313
-    this.addMany([new Card('Joker', 3)]);
-    this.addMany([new Card('Joker', 4)]);
+    this.addMany([new Card(Suit.Joker, 3)]);
+    this.addMany([new Card(Suit.Joker, 4)]);
     return this;
   }
 }

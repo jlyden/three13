@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { Card, CardGroup } from '../models';
+import { Card, CardGroup, Suit } from '../models';
 
-export function transformRunArrayIntoCardGroup(runArray: number[], suit: string): CardGroup {
+export function transformRunArrayIntoCardGroup(runArray: number[], suit: Suit): CardGroup {
   const group = new CardGroup();
   runArray.forEach((value) => {
     group.addMany([new Card(suit, value)]);

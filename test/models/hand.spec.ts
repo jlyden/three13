@@ -1,6 +1,6 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { Card, Hand, CardGroup } from '../../src/models';
+import { Card, Hand, CardGroup, Suit } from '../../src/models';
 import { sortValuesIntoRuns } from '../../src/utils';
 import {
   cardJ,
@@ -31,17 +31,17 @@ describe('Hand methods', () => {
   describe('findFilteredCards', () => {
     it('returns single card filtered by suit', () => {
       const expected = new CardGroup([cardH13]);
-      expect(hand11Cards.findFilteredCards('Hearts')).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards(Suit.Hearts)).to.deep.equal(expected);
     });
 
     it('returns multiple cards filtered by suit', () => {
       const expected = new CardGroup([cardD4, cardD5, cardD6, cardD13]);
-      expect(hand11Cards.findFilteredCards('Diamonds')).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards(Suit.Diamonds)).to.deep.equal(expected);
     });
 
     it('returns empty when hand has none of that suit', () => {
       const expected = new CardGroup();
-      expect(hand11Cards.findFilteredCards('Clubs')).to.deep.equal(expected);
+      expect(hand11Cards.findFilteredCards(Suit.Clubs)).to.deep.equal(expected);
     });
 
     it('returns single card filtered by value', () => {
@@ -91,7 +91,7 @@ describe('Hand methods', () => {
   describe('processRunsFromHand', () => {
     it('correctly processes sortedRuns where run.length === 3 with Joker', () => {
       // Arrange
-      const suit = 'Diamonds';
+      const suit = Suit.Diamonds;
       const hand11CardsDiamondsCopy = _.cloneDeep(hand11Cards);
       const cardsOfSuit = hand11CardsDiamondsCopy.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
@@ -110,7 +110,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where run.length > 3 with Joker', () => {
       // Arrange
-      const suit = 'Spades';
+      const suit = Suit.Spades;
       const hand11CardsSpadesCopy = _.cloneDeep(hand11Cards);
       const cardsOfSuit = hand11CardsSpadesCopy.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
@@ -129,7 +129,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where run.length < 3 with Joker', () => {
       // Arrange
-      const suit = 'Diamonds';
+      const suit = Suit.Diamonds;
       const handRunLowWithWilds = new Hand([cardJ, cardD5, cardD6, cardH13]);
       const cardsOfSuit = handRunLowWithWilds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
@@ -148,7 +148,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where run.length === 3 no wilds', () => {
       // Arrange
-      const suit = 'Diamonds';
+      const suit = Suit.Diamonds;
       const hand8CardsDiamonds = _.cloneDeep(hand11Cards);
       hand8CardsDiamonds.removeMany([cardD13, cardJ, cardS3]);
       const cardsOfSuit = hand8CardsDiamonds.findFilteredCards(suit);
@@ -168,7 +168,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where run.length > 3 no wilds', () => {
       // Arrange
-      const suit = 'Spades';
+      const suit = Suit.Spades;
       const hand8CardsSpades = _.cloneDeep(hand11Cards);
       hand8CardsSpades.removeMany([cardD4, cardD13, cardJ]);
       const cardsOfSuit = hand8CardsSpades.findFilteredCards(suit);
@@ -188,7 +188,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where run.length < 3 no wilds', () => {
       // Arrange
-      const suit = 'Diamonds';
+      const suit = Suit.Diamonds;
       const handRunLowNoWilds = new Hand([cardD4, cardD5, cardH13]);
       const cardsOfSuit = handRunLowNoWilds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
@@ -206,7 +206,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where there are two 3-card runs, no wilds', () => {
       // Arrange
-      const suit = 'Spades';
+      const suit = Suit.Spades;
       const hard7CardsSpades = new Hand([cardH13, cardS3, cardS4, cardS5, cardS8, cardS9, cardS10]);
       const cardsOfSuit = hard7CardsSpades.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
@@ -226,7 +226,7 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where there are two runs, 3 & 4 cards, no wilds', () => {
       // Arrange
-      const suit = 'Spades';
+      const suit = Suit.Spades;
       const hard8CardsSpades = new Hand([cardH13, cardS3, cardS4, cardS5, cardS6, cardS8, cardS9, cardS10]);
       const cardsOfSuit = hard8CardsSpades.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
@@ -246,8 +246,8 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where there is one run, one almost run, two wilds', () => {
       // Arrange
-      const cardD8 = new Card('Diamonds', 8);
-      const suit = 'Spades';
+      const cardD8 = new Card(Suit.Diamonds, 8);
+      const suit = Suit.Spades;
       const hard8CardsSpadesJoker = new Hand([cardD8, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9, cardJ]);
       const cardsOfSuit = hard8CardsSpadesJoker.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);

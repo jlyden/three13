@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Card, CardGroup } from '../models';
+import { Card, CardGroup, Suit } from '../models';
 import {
   reduceCardsByValue,
   removeValueFromArray,
@@ -40,8 +40,8 @@ export class Hand extends CardGroup {
    * TODO: private/rewire
    */
   public processRunsFromHand(round: number) {
-    for (const suit of Card.SUITS) {
-      if (suit === 'Joker') {
+    for (const suit of Object.values(Suit)) {
+      if (suit === Suit.Joker) {
         continue;
       }
       const cardsOfSuit = this.findFilteredCards(suit);
@@ -76,7 +76,7 @@ export class Hand extends CardGroup {
    * TODO: private/rewire
    */
   public findWildCards(round: number): CardGroup {
-    const wildsArray = this.findFilteredCards('Joker');
+    const wildsArray = this.findFilteredCards(Suit.Joker);
     wildsArray.addMany(this.findFilteredCards(round).getCards());
     return wildsArray;
   }
@@ -93,7 +93,7 @@ export class Hand extends CardGroup {
    * @param round current game round
    * TODO: private/rewire
    */
-  public removeValidRunsFromHand(round: number, sortedRuns: number[][], suit: string) {
+  public removeValidRunsFromHand(round: number, sortedRuns: number[][], suit: Suit) {
     sortedRuns.forEach((run) => {
       const group = transformRunArrayIntoCardGroup(run, suit);
       if (group.length() === Hand.MINIMUM_SET) {

@@ -1,7 +1,7 @@
 import chai from 'chai';
 import forEach from 'mocha-each';
 import _ from 'lodash';
-import { Round, Game, User, Card, Hand } from '../../src/models';
+import { Round, Game, User, Card, Hand, Suit } from '../../src/models';
 import { invalidDiscardMessage } from '../../src/constants/messages';
 import { userOne, userTwo, userThree, userFour, userFive, userSix } from '../common/testData';
 
@@ -174,8 +174,8 @@ describe('round methods', () => {
       expect(discardFailRoundOne.hands[handIndex].getCards()).to.have.length(4);
       const originalVisibleCard = discardFailRoundOne.visibleCard;
 
-      let missingSuit = '';
-      for (const suit of Card.SUITS) {
+      let missingSuit;
+      for (const suit of Object.values(Suit)) {
         const matched = discardFailRoundOne.hands[handIndex].findFilteredCards(suit);
         if (matched.length() === 0) {
           missingSuit = suit;
