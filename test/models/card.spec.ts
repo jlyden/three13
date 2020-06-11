@@ -4,7 +4,7 @@ import { Card, Suit } from '../../src/models';
 
 const { expect } = chai;
 
-describe('card methods', () => {
+describe('Card methods', () => {
   describe('constructor error', () => {
     const invalidValue = 2;
     it('throws error if invalid value is passed', () => {

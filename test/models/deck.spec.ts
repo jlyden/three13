@@ -2,10 +2,11 @@ import chai from 'chai';
 import _ from 'lodash';
 import { Card, Deck, Suit } from '../../src/models';
 import { reduceCardsByValue } from '../../src/utils/cardUtils';
+import * as Util from 'util';
 
 const { expect } = chai;
 
-describe('deck methods', () => {
+describe('Deck methods', () => {
   describe('shuffle', () => {
     it('mixes up a deck of cards', () => {
       const testDeck = new Deck();

@@ -10,7 +10,7 @@ const { expect } = chai;
 const twoPlayers = [userOne, userTwo];
 const threePlayers = [userOne, userTwo, userThree];
 
-describe('round methods', () => {
+describe('Round methods', () => {
   describe('play through a round', () => {
     const progressiveGame = new Game(1, threePlayers);
     const progGameRoundOne = new Round(progressiveGame);
@@ -194,7 +194,6 @@ describe('round methods', () => {
     });
   });
 
-  /* TODO: Uncomment after Dev
   describe('setNextUp', () => {
     describe('2 player game', () => {
       // Setup
@@ -228,7 +227,6 @@ describe('round methods', () => {
 
     describe('3 player game', () => {
       // Setup
-      const threePlayers = [userOne, userTwo, userThree];
       const testGame3Players = new Game(1, threePlayers);
       const testRound3Players = new Round(testGame3Players);
 
@@ -256,7 +254,7 @@ describe('round methods', () => {
           expect(testRound3Players.currentPlayer).to.deep.equal(testRound3Players.game.players[expected]);
         });
     });
- 
+
     describe('4 player game', () => {
       // Setup
       const fourPlayers = [userOne, userTwo, userThree, userFour];
@@ -350,5 +348,4 @@ describe('round methods', () => {
         });
     });
   });
-*/
 });

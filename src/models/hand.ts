@@ -23,13 +23,18 @@ export class Hand extends CardGroup {
   }
 
   /**
-   * Ensure this is a valid 313 hand
+   * Sort cards into runs and sets, then calculate penalty
    * @param round - current round of game, for determining wilds
    */
   public evaluateHand(round: number) {
-    // TODO: Quick win if hand is all wild cards
-    this.processRunsFromHand(round);
-    this.processSetsFromHand(round);
+    const wildCardGroup = this.findWildCards(round);
+    // If hand is all wild cards, move to processed. Done.
+    if(wildCardGroup.length() === round) {
+      this.moveGroupToGroupArray(wildCardGroup, this.processedCards);
+    } else {
+      this.processRunsFromHand(round);
+      this.processSetsFromHand(round);
+    }
     // TODO: calculate penalty based on what remains in hand - add extra wilds to any run/set
   }
 
@@ -65,6 +70,12 @@ export class Hand extends CardGroup {
       matchingGroup.addMany(_.filter(this.getCards(), { suit: matcher }));
     } else if (typeof matcher === 'number') {
       matchingGroup.addMany(_.filter(this.getCards(), { value: matcher }));
+      const jokersCaughtInValueFilter = _.filter(matchingGroup.getCards(), { suit: 'Joker' });
+      try {
+        matchingGroup.removeMany(jokersCaughtInValueFilter);
+      } catch (error) {
+        // Error here means there was no joker after all, so just swallow it
+      }
     }
     return matchingGroup;
   }
@@ -116,6 +127,7 @@ export class Hand extends CardGroup {
    *  - move sets of 3+ cards to processed cards
    *  - look in longRuns for help for 1 or 2 card sets
    *  - use wilds for help if still needed
+   * TODO: do we need to worry about Jokers in round 3 or 4?
    * TODO: private/rewire
    */
   public processSetsFromHand(round: number) {

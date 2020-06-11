@@ -4,6 +4,8 @@ import { Card, Hand, CardGroup, Suit } from '../../src/models';
 import { sortValuesIntoRuns } from '../../src/utils';
 import {
   cardJ,
+  cardC3,
+  cardD3,
   cardD4,
   cardD5,
   cardD6,
@@ -25,7 +27,31 @@ const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, c
 describe('Hand methods', () => {
 
   describe('evaluateHand', () => {
-    // TODO:
+    it('moves all cards from hand to processed cards when they are all wild', () => {
+      const wildGroup = new CardGroup([cardJ, cardC3, cardD3]);
+      const wildHand = new Hand([cardJ, cardC3, cardD3]);
+      const round = wildHand.length();
+
+      wildHand.evaluateHand(round);
+
+      // tslint:disable-next-line: no-unused-expression
+      expect(wildHand.getCards()).to.be.empty;
+      expect(wildHand.processedCards).to.deep.equal([wildGroup]);
+    });
+
+    it('does not move cards from hand to processed when not all wild', () => {
+      const setGroup = new CardGroup([cardC3, cardD3, cardJ]);
+      const someHand = new Hand([cardJ, cardC3, cardD3, cardH13]);
+      const round = someHand.length();
+
+      someHand.evaluateHand(round);
+
+      // tslint:disable-next-line: no-unused-expression
+      expect(someHand.getCards()).to.deep.equal([cardH13]);
+      expect(someHand.processedCards).to.deep.equal([setGroup]);
+    });
+
+    // TODO: Still need to check runs, sets, eval, etc
   });
 
   describe('findFilteredCards', () => {

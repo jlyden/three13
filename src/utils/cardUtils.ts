@@ -10,7 +10,6 @@ export function transformRunArrayIntoCardGroup(runArray: number[], suit: Suit): 
 }
 
 /**
- *
  * @param singleSuitCards length >= 3 b/c a run must have at least 3 cards in it
  * @returns array of arrays of consecutive values, i.e. [[4,5], [7,8,9] [12]]
  * Ref: http://stackoverflow.com/questions/7352684/how-to-find-the-groups-of-consecutive-elements-from-an-array-in-numpy
@@ -47,6 +46,6 @@ export function reduceCardsByValue(cards: Card[]) {
 }
 
 export function removeValueFromArray(anArray: number[], value: number) {
-  const removedValue = _.pull(anArray, value);
+  _.pull(anArray, value);
   return anArray;
 }

@@ -4,7 +4,7 @@ import { userOne, userTwo, userThree, userFour, userFive, userSix } from '../com
 
 const { expect } = chai;
 
-describe('game methods', () => {
+describe('Game methods', () => {
   const twoUsers = [userOne, userTwo];
   const twoPlayerGame = new Game(1, twoUsers);
   const userSeven = new User(7, 'Gordon');
