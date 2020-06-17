@@ -48,7 +48,6 @@ export class Hand extends CardGroup {
    * @return CardGroup matching param
    * Does not remove cards from hand
    * TODO: private/rewire
-   * TODO: unit test to cover catch w/return
    */
   public findFilteredCards(matcher: string | number): CardGroup {
     const matchingGroup = new CardGroup();
@@ -57,12 +56,7 @@ export class Hand extends CardGroup {
     } else if (typeof matcher === 'number') {
       matchingGroup.addMany(_.filter(this.getCards(), { value: matcher }));
       const jokersCaughtInValueFilter = _.filter(matchingGroup.getCards(), { suit: 'Joker' });
-      try {
-        matchingGroup.removeMany(jokersCaughtInValueFilter);
-      } catch (CardNotFoundError) {
-        // Error here means there was no joker after all, so just swallow it
-        return matchingGroup;
-      }
+      matchingGroup.removeMany(jokersCaughtInValueFilter);
     }
     return matchingGroup;
   }

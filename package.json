@@ -39,6 +39,7 @@
   "scripts": {
     "start": "node .",
     "build": "tsc",
+    "clean-build": "rm -rf dist/ && tsc",
     "test": "nyc mocha -c -r ts-node/register test/**/** --reporter spec",
     "format": "prettier --write \"src/**/*.ts\" \"dist/**/*.js\" \"test/**/*.ts\"",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix"

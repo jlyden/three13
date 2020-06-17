@@ -96,6 +96,12 @@ describe('Hand methods', () => {
       const expected = new CardGroup();
       expect(hand11Cards.findFilteredCards(11)).to.deep.equal(expected);
     });
+
+    it('returns multiple cards filtered by value but no Jokers', () => {
+      const handToFilter = new Hand([cardJ3, cardD3, cardD4, cardD8, cardS3, cardH13])
+      const expected = new CardGroup([cardD3, cardS3]);
+      expect(handToFilter.findFilteredCards(3)).to.deep.equal(expected);
+    });
   });
 
   describe('findWildCards', () => {
@@ -126,7 +132,7 @@ describe('Hand methods', () => {
     });
   });
 
-  describe('processRunsFromHand', () => {
+  describe('removeValidRunsFromHand', () => {
     it('correctly processes sortedRuns where run.length === 3 with Joker', () => {
       // Arrange
       const suit = Suit.Diamonds;
