@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
 export enum Suit {
-  Clubs = 'Clubs', 
-  Diamonds = 'Diamonds', 
-  Hearts = 'Hearts', 
-  Spades = 'Spades', 
-  Joker = 'Joker' 
+  Clubs = 'Clubs',
+  Diamonds = 'Diamonds',
+  Hearts = 'Hearts',
+  Spades = 'Spades',
+  Joker = 'Joker',
 }
 
 export class Card {

@@ -9,12 +9,14 @@ export const userFive = new User(5, 'Edith');
 export const userSix = new User(6, 'Fred');
 
 // Cards
-export const cardJ = new Card(Suit.Joker, 3);
+export const cardJ3 = new Card(Suit.Joker, 3);
+export const cardJ4 = new Card(Suit.Joker, 4);
 export const cardC3 = new Card(Suit.Clubs, 3);
 export const cardD3 = new Card(Suit.Diamonds, 3);
 export const cardD4 = new Card(Suit.Diamonds, 4);
 export const cardD5 = new Card(Suit.Diamonds, 5);
 export const cardD6 = new Card(Suit.Diamonds, 6);
+export const cardD8 = new Card(Suit.Diamonds, 8);
 export const cardD13 = new Card(Suit.Diamonds, 13);
 export const cardH3 = new Card(Suit.Hearts, 3);
 export const cardH5 = new Card(Suit.Hearts, 5);
@@ -27,3 +29,4 @@ export const cardS6 = new Card(Suit.Spades, 6);
 export const cardS8 = new Card(Suit.Spades, 8);
 export const cardS9 = new Card(Suit.Spades, 9);
 export const cardS10 = new Card(Suit.Spades, 10);
+export const cardS13 = new Card(Suit.Spades, 13);

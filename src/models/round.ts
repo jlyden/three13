@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { drawMessage, discardMessage, invalidDiscardMessage } from '../constants/messages';
 import { Deck, Hand, Game, User } from '../models';
 import { Card } from './card';
+import { CardNotFoundError } from '../errors';
 
 export class Round {
   public game: Game;
@@ -61,13 +62,14 @@ export class Round {
 
       // Set up for next player turn
       this.setNextCurrentPlayer();
-    } catch (error) {
+    } catch (CardNotFoundError) {
       // If error, set message so player can try again
       this.setMessage(invalidDiscardMessage);
     }
   }
 
   // NOTE: User needs to communicate discard and intention to 'Go out'
+  // TODO: Tests
   public endRound(card: Card) {
     // set aside discard (but save in case hand is invalid)
     // evaluate user's hand - if invalid, round continues

@@ -1,7 +1,12 @@
 import chai from 'chai';
 import _ from 'lodash';
 import { CardGroup, Suit } from '../../src/models';
-import { transformRunArrayIntoCardGroup, sortValuesIntoRuns, reduceCardsByValue, removeValueFromArray } from '../../src/utils';
+import {
+  transformRunArrayIntoCardGroup,
+  sortValuesIntoRuns,
+  reduceCardsByValue,
+  removeValueFromArray,
+} from '../../src/utils';
 import { cardS3, cardS4, cardS5, cardS6, cardS9, cardH13, cardH10, cardH3, cardH5 } from '../common/testData';
 
 const { expect } = chai;
@@ -20,7 +25,7 @@ describe('Utils: CardUtils methods', () => {
 
   describe('sortValuesIntoRuns', () => {
     it('sorts values with one run and one single', () => {
-      const spadeGroup= new CardGroup([cardS3, cardS4, cardS5, cardS6, cardS9]);
+      const spadeGroup = new CardGroup([cardS3, cardS4, cardS5, cardS6, cardS9]);
       const expected = [[3, 4, 5, 6], [9]];
       expect(sortValuesIntoRuns(spadeGroup)).to.deep.equal(expected);
     });
@@ -34,8 +39,7 @@ describe('Utils: CardUtils methods', () => {
 
   describe('reduceCardsByValue', () => {
     it('returns the expected reduced object', () => {
-      const someCards = [cardS3, cardS4, cardS5, cardS6, cardS9, 
-          cardH13, cardH10, cardH3, cardH5];
+      const someCards = [cardS3, cardS4, cardS5, cardS6, cardS9, cardH13, cardH10, cardH3, cardH5];
       const expectedReduction = {
         '3': 2,
         '4': 1,
@@ -43,7 +47,7 @@ describe('Utils: CardUtils methods', () => {
         '6': 1,
         '9': 1,
         '10': 1,
-        '13': 1
+        '13': 1,
       };
       expect(reduceCardsByValue(someCards)).to.deep.equal(expectedReduction);
     });

@@ -1,9 +1,9 @@
 import chai from 'chai';
 import _ from 'lodash';
-import { Card, Hand, CardGroup, Suit } from '../../src/models';
+import { Hand, CardGroup, Suit } from '../../src/models';
 import { sortValuesIntoRuns } from '../../src/utils';
 import {
-  cardJ,
+  cardJ3,
   cardC3,
   cardD3,
   cardD4,
@@ -18,18 +18,30 @@ import {
   cardS8,
   cardS9,
   cardS10,
+  cardD8,
 } from '../common/testData';
 
 const { expect } = chai;
 
-const hand11Cards = new Hand([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
+const hand11Cards = new Hand([
+  cardJ3,
+  cardD4,
+  cardD5,
+  cardD6,
+  cardD13,
+  cardH13,
+  cardS3,
+  cardS4,
+  cardS5,
+  cardS6,
+  cardS9,
+]);
 
 describe('Hand methods', () => {
-
   describe('evaluateHand', () => {
     it('moves all cards from hand to processed cards when they are all wild', () => {
-      const wildGroup = new CardGroup([cardJ, cardC3, cardD3]);
-      const wildHand = new Hand([cardJ, cardC3, cardD3]);
+      const wildGroup = new CardGroup([cardJ3, cardC3, cardD3]);
+      const wildHand = new Hand([cardJ3, cardC3, cardD3]);
       const round = wildHand.length();
 
       wildHand.evaluateHand(round);
@@ -40,8 +52,8 @@ describe('Hand methods', () => {
     });
 
     it('does not move cards from hand to processed when not all wild', () => {
-      const setGroup = new CardGroup([cardC3, cardD3, cardJ]);
-      const someHand = new Hand([cardJ, cardC3, cardD3, cardH13]);
+      const setGroup = new CardGroup([cardC3, cardD3, cardJ3]);
+      const someHand = new Hand([cardJ3, cardC3, cardD3, cardH13]);
       const round = someHand.length();
 
       someHand.evaluateHand(round);
@@ -89,14 +101,14 @@ describe('Hand methods', () => {
   describe('findWildCards', () => {
     it('returns wild cards without round wilds', () => {
       const round = 11;
-      const expected = new CardGroup([cardJ]);
-      expect(hand11Cards.findWildCards(round)).to.deep.equal(expected);
+      const expected = new CardGroup([cardJ3]);
+      expect(hand11Cards.findWildCards(11)).to.deep.equal(expected);
     });
 
     it('returns wild cards including round wilds', () => {
       const round = 4;
-      const expected = new CardGroup([cardJ, cardD4, cardS4]);
-      expect(hand11Cards.findWildCards(round)).to.deep.equal(expected);
+      const expected = new CardGroup([cardJ3, cardD4, cardS4]);
+      expect(hand11Cards.findWildCards(4)).to.deep.equal(expected);
     });
 
     it('returns wild cards without jokers', () => {
@@ -123,7 +135,7 @@ describe('Hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand11CardsDiamondsCopy.getCards().length;
       const expectedRun = new CardGroup([cardD4, cardD5, cardD6]);
-      const remainingHand = new CardGroup([cardJ, cardD13, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
+      const remainingHand = new CardGroup([cardJ3, cardD13, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9]);
 
       // Act
       hand11CardsDiamondsCopy.removeValidRunsFromHand(round, sortedRuns, suit);
@@ -142,7 +154,7 @@ describe('Hand methods', () => {
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand11CardsSpadesCopy.getCards().length;
       const expectedRun = new CardGroup([cardS3, cardS4, cardS5, cardS6]);
-      const remainingHand = new CardGroup([cardJ, cardD4, cardD5, cardD6, cardD13, cardH13, cardS9]);
+      const remainingHand = new CardGroup([cardJ3, cardD4, cardD5, cardD6, cardD13, cardH13, cardS9]);
 
       // Act
       hand11CardsSpadesCopy.removeValidRunsFromHand(round, sortedRuns, suit);
@@ -156,11 +168,11 @@ describe('Hand methods', () => {
     it('correctly processes sortedRuns where run.length < 3 with Joker', () => {
       // Arrange
       const suit = Suit.Diamonds;
-      const handRunLowWithWilds = new Hand([cardJ, cardD5, cardD6, cardH13]);
+      const handRunLowWithWilds = new Hand([cardJ3, cardD5, cardD6, cardH13]);
       const cardsOfSuit = handRunLowWithWilds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = handRunLowWithWilds.getCards().length;
-      const expectedRun = new CardGroup([cardD5, cardD6, cardJ]);
+      const expectedRun = new CardGroup([cardD5, cardD6, cardJ3]);
       const remainingHand = new CardGroup([cardH13]);
 
       // Act
@@ -176,7 +188,7 @@ describe('Hand methods', () => {
       // Arrange
       const suit = Suit.Diamonds;
       const hand8CardsDiamonds = _.cloneDeep(hand11Cards);
-      hand8CardsDiamonds.removeMany([cardD13, cardJ, cardS3]);
+      hand8CardsDiamonds.removeMany([cardD13, cardJ3, cardS3]);
       const cardsOfSuit = hand8CardsDiamonds.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand8CardsDiamonds.getCards().length;
@@ -196,7 +208,7 @@ describe('Hand methods', () => {
       // Arrange
       const suit = Suit.Spades;
       const hand8CardsSpades = _.cloneDeep(hand11Cards);
-      hand8CardsSpades.removeMany([cardD4, cardD13, cardJ]);
+      hand8CardsSpades.removeMany([cardD4, cardD13, cardJ3]);
       const cardsOfSuit = hand8CardsSpades.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hand8CardsSpades.getCards().length;
@@ -272,13 +284,12 @@ describe('Hand methods', () => {
 
     it('correctly processes sortedRuns where there is one run, one almost run, two wilds', () => {
       // Arrange
-      const cardD8 = new Card(Suit.Diamonds, 8);
       const suit = Suit.Spades;
-      const hard8CardsSpadesJoker = new Hand([cardD8, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9, cardJ]);
+      const hard8CardsSpadesJoker = new Hand([cardD8, cardH13, cardS3, cardS4, cardS5, cardS6, cardS9, cardJ3]);
       const cardsOfSuit = hard8CardsSpadesJoker.findFilteredCards(suit);
       const sortedRuns = sortValuesIntoRuns(cardsOfSuit);
       const round = hard8CardsSpadesJoker.getCards().length;
-      const expectedRun = new CardGroup([cardS9, cardD8, cardJ]);
+      const expectedRun = new CardGroup([cardS9, cardD8, cardJ3]);
       const expectedLongRun = new CardGroup([cardS3, cardS4, cardS5, cardS6]);
       const remainingHand = new CardGroup([cardH13]);
 

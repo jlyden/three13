@@ -1,7 +1,7 @@
 import chai from 'chai';
 import forEach from 'mocha-each';
 import _ from 'lodash';
-import { Round, Game, User, Card, Hand, Suit } from '../../src/models';
+import { Card, Game, Round, Suit } from '../../src/models';
 import { invalidDiscardMessage } from '../../src/constants/messages';
 import { userOne, userTwo, userThree, userFour, userFive, userSix } from '../common/testData';
 
@@ -214,15 +214,14 @@ describe('Round methods', () => {
         [1, 10],
         [0, 11],
         [1, 12],
-        [0, 13]
-      ]
+        [0, 13],
+      ];
 
-      forEach(testCases)
-        .it('sets user %d to next up for round %d', (expected, round) => {
-          testGame2Players.round = round;
-          testRound2Players.setFirstPlayerForRound();
-          expect(testRound2Players.currentPlayer).to.deep.equal(testRound2Players.game.players[expected]);
-        });
+      forEach(testCases).it('sets user %d to next up for round %d', (expected, round) => {
+        testGame2Players.round = round;
+        testRound2Players.setFirstPlayerForRound();
+        expect(testRound2Players.currentPlayer).to.deep.equal(testRound2Players.game.players[expected]);
+      });
     });
 
     describe('3 player game', () => {
@@ -244,15 +243,14 @@ describe('Round methods', () => {
         [1, 10],
         [2, 11],
         [0, 12],
-        [1, 13]
+        [1, 13],
       ];
 
-      forEach(testCases)
-        .it('sets user %d to next up for round %d', (expected, round) => {
-          testGame3Players.round = round;
-          testRound3Players.setFirstPlayerForRound();
-          expect(testRound3Players.currentPlayer).to.deep.equal(testRound3Players.game.players[expected]);
-        });
+      forEach(testCases).it('sets user %d to next up for round %d', (expected, round) => {
+        testGame3Players.round = round;
+        testRound3Players.setFirstPlayerForRound();
+        expect(testRound3Players.currentPlayer).to.deep.equal(testRound3Players.game.players[expected]);
+      });
     });
 
     describe('4 player game', () => {
@@ -275,15 +273,14 @@ describe('Round methods', () => {
         [3, 10],
         [0, 11],
         [1, 12],
-        [2, 13]
+        [2, 13],
       ];
 
-      forEach(testCases)
-        .it('sets user %d to next up for round %d', (expected, round) => {
-          testGame4Players.round = round;
-          testRound4Players.setFirstPlayerForRound();
-          expect(testRound4Players.currentPlayer).to.deep.equal(testRound4Players.game.players[expected]);
-        });
+      forEach(testCases).it('sets user %d to next up for round %d', (expected, round) => {
+        testGame4Players.round = round;
+        testRound4Players.setFirstPlayerForRound();
+        expect(testRound4Players.currentPlayer).to.deep.equal(testRound4Players.game.players[expected]);
+      });
     });
 
     describe('5 player game', () => {
@@ -306,15 +303,14 @@ describe('Round methods', () => {
         [2, 10],
         [3, 11],
         [4, 12],
-        [0, 13]
+        [0, 13],
       ];
 
-      forEach(testCases)
-        .it('sets user %d to next up for round %d', (expected, round) => {
-          testGame5Players.round = round;
-          testRound5Players.setFirstPlayerForRound();
-          expect(testRound5Players.currentPlayer).to.equal(testRound5Players.game.players[expected]);
-        });
+      forEach(testCases).it('sets user %d to next up for round %d', (expected, round) => {
+        testGame5Players.round = round;
+        testRound5Players.setFirstPlayerForRound();
+        expect(testRound5Players.currentPlayer).to.equal(testRound5Players.game.players[expected]);
+      });
     });
 
     describe('6 player game', () => {
@@ -337,15 +333,14 @@ describe('Round methods', () => {
         [1, 10],
         [2, 11],
         [3, 12],
-        [4, 13]
+        [4, 13],
       ];
 
-      forEach(testCases)
-        .it('sets user %d to next up for round %d', (expected, round) => {
-          testGame6Players.round = round;
-          testRound6Players.setFirstPlayerForRound();
-          expect(testRound6Players.currentPlayer).to.equal(testRound6Players.game.players[expected]);
-        });
+      forEach(testCases).it('sets user %d to next up for round %d', (expected, round) => {
+        testGame6Players.round = round;
+        testRound6Players.setFirstPlayerForRound();
+        expect(testRound6Players.currentPlayer).to.equal(testRound6Players.game.players[expected]);
+      });
     });
   });
 });

@@ -4,7 +4,7 @@ import {
   reduceCardsByValue,
   removeValueFromArray,
   sortValuesIntoRuns as sortCardValuesIntoRuns,
-  transformRunArrayIntoCardGroup
+  transformRunArrayIntoCardGroup,
 } from '../utils';
 
 export class Hand extends CardGroup {
@@ -29,13 +29,54 @@ export class Hand extends CardGroup {
   public evaluateHand(round: number) {
     const wildCardGroup = this.findWildCards(round);
     // If hand is all wild cards, move to processed. Done.
-    if(wildCardGroup.length() === round) {
-      this.moveGroupToGroupArray(wildCardGroup, this.processedCards);
+    if (wildCardGroup.length() === round) {
+      try {
+        this.moveGroupToGroupArray(wildCardGroup, this.processedCards);
+      } catch (error) {
+        // TODO: make sure we have test coverage for this
+        // If a card wasn't wild, we should bail anyhow, move on
+      }
     } else {
       this.processRunsFromHand(round);
       this.processSetsFromHand(round);
     }
     // TODO: calculate penalty based on what remains in hand - add extra wilds to any run/set
+  }
+
+  /**
+   * @param matcher 'suit' or 'value' to be filtered by
+   * @return CardGroup matching param
+   * Does not remove cards from hand
+   * TODO: private/rewire
+   * TODO: unit test to cover catch w/return
+   */
+  public findFilteredCards(matcher: string | number): CardGroup {
+    const matchingGroup = new CardGroup();
+    if (typeof matcher === 'string') {
+      matchingGroup.addMany(_.filter(this.getCards(), { suit: matcher }));
+    } else if (typeof matcher === 'number') {
+      matchingGroup.addMany(_.filter(this.getCards(), { value: matcher }));
+      const jokersCaughtInValueFilter = _.filter(matchingGroup.getCards(), { suit: 'Joker' });
+      try {
+        matchingGroup.removeMany(jokersCaughtInValueFilter);
+      } catch (CardNotFoundError) {
+        // Error here means there was no joker after all, so just swallow it
+        return matchingGroup;
+      }
+    }
+    return matchingGroup;
+  }
+
+  /**
+   * @param round - current round of game, for determining wilds
+   * @return CardGroup of Wild Cards
+   * Does not remove cards from hand
+   * TODO: private/rewire
+   */
+  public findWildCards(round: number): CardGroup {
+    const wildsArray = this.findFilteredCards(Suit.Joker);
+    wildsArray.addMany(this.findFilteredCards(round).getCards());
+    return wildsArray;
   }
 
   /**
@@ -59,40 +100,6 @@ export class Hand extends CardGroup {
   }
 
   /**
-   * @param matcher 'suit' or 'value' to be filtered by
-   * @return CardGroup matching param
-   * Does not remove cards from hand
-   * TODO: private/rewire
-   */
-  public findFilteredCards(matcher: string | number): CardGroup {
-    const matchingGroup = new CardGroup();
-    if (typeof matcher === 'string') {
-      matchingGroup.addMany(_.filter(this.getCards(), { suit: matcher }));
-    } else if (typeof matcher === 'number') {
-      matchingGroup.addMany(_.filter(this.getCards(), { value: matcher }));
-      const jokersCaughtInValueFilter = _.filter(matchingGroup.getCards(), { suit: 'Joker' });
-      try {
-        matchingGroup.removeMany(jokersCaughtInValueFilter);
-      } catch (error) {
-        // Error here means there was no joker after all, so just swallow it
-      }
-    }
-    return matchingGroup;
-  }
-
-  /**
-   * @param round - current round of game, for determining wilds
-   * @return CardGroup of Wild Cards
-   * Does not remove cards from hand
-   * TODO: private/rewire
-   */
-  public findWildCards(round: number): CardGroup {
-    const wildsArray = this.findFilteredCards(Suit.Joker);
-    wildsArray.addMany(this.findFilteredCards(round).getCards());
-    return wildsArray;
-  }
-
-  /**
    * For all runs in suit,
    *  - add valid 3 card runs to processed cards
    *  - add valid 4+ card runs to long runs
@@ -106,20 +113,24 @@ export class Hand extends CardGroup {
    */
   public removeValidRunsFromHand(round: number, sortedRuns: number[][], suit: Suit) {
     sortedRuns.forEach((run) => {
-      const group = transformRunArrayIntoCardGroup(run, suit);
-      if (group.length() === Hand.MINIMUM_SET) {
-        // If 3 card run, move to processed
-        this.moveGroupToGroupArray(group, this.processedCards);
-      } else if (group.length() > Hand.MINIMUM_SET) {
-        // If 4+ card run, move to longRuns to help with sets later
-        this.moveGroupToGroupArray(group, this.longRuns);
-      } else {
-        // If less than 3 card run, try make up difference from from wilds
-        this.completeGroupWithWilds(group, round);
+      try {
+        const group = transformRunArrayIntoCardGroup(run, suit);
+        if (group.length() === Hand.MINIMUM_SET) {
+          // If 3 card run, move to processed
+          this.moveGroupToGroupArray(group, this.processedCards);
+        } else if (group.length() > Hand.MINIMUM_SET) {
+          // If 4+ card run, move to longRuns to help with sets later
+          this.moveGroupToGroupArray(group, this.longRuns);
+        } else {
+          // If less than 3 card run, try make up difference from from wilds
+          this.completeGroupWithWilds(group, round);
+        }
+        // If we can't make it up with wilds, leave cards in hand
+      } catch (error) {
+        // TODO: test for this
+        // If we fail, it means cards we thought were in hand weren't there
       }
-      // If we can't make it up with wilds, leave cards in hand
-      }
-    );
+    });
   }
 
   /**
@@ -134,27 +145,32 @@ export class Hand extends CardGroup {
     // Get values present in hand (excluding wild), sorted desc
     const valuesDescWithoutWilds = removeValueFromArray(this.getValuesFromHand(), round);
 
-    // Loop through values, attempting to make sets of at least three cards
-    for (const value of valuesDescWithoutWilds) {
-      const cardsOfValue = this.findFilteredCards(value);
+    try {
+      // Loop through values, attempting to make sets of at least three cards
+      for (const value of valuesDescWithoutWilds) {
+        const cardsOfValue = this.findFilteredCards(value);
 
-      // If there are already 3+ cards in a set, move to processed
-      if (cardsOfValue.length() >= Hand.MINIMUM_SET){
-        this.moveGroupToGroupArray(cardsOfValue, this.processedCards);
-      } else {
-        // Try make up missing cards from the end of a longRun
-        let finished = this.completeSetWithLongRunsHelp(cardsOfValue, -1);
+        // If there are already 3+ cards in a set, move to processed
+        if (cardsOfValue.length() >= Hand.MINIMUM_SET) {
+          this.moveGroupToGroupArray(cardsOfValue, this.processedCards);
+        } else {
+          // Try make up missing cards from the end of a longRun
+          let finished = this.completeSetWithLongRunsHelp(cardsOfValue, -1);
 
-        // If still < 3 cards, try make up from the front of a longRun
-        if (!finished) {
-          finished = this.completeSetWithLongRunsHelp(cardsOfValue, 0);
+          // If still < 3 cards, try make up from the front of a longRun
+          if (!finished) {
+            finished = this.completeSetWithLongRunsHelp(cardsOfValue, 0);
+          }
+          // If still < 3 cards, try make up with wild cards
+          if (!finished) {
+            this.completeGroupWithWilds(cardsOfValue, round);
+          }
+          // If we can't make it up with wilds, leave cards in hand
         }
-        // If still < 3 cards, try make up with wild cards
-        if (!finished) {
-          this.completeGroupWithWilds(cardsOfValue, round);
-        }
-        // If we can't make it up with wilds, leave cards in hand
       }
+    } catch (error) {
+      // TODO: test for this
+      // If we fail, it means cards we thought were in hand weren't there
     }
   }
 
@@ -185,30 +201,36 @@ export class Hand extends CardGroup {
     const longRunsLength = this.longRuns.length;
 
     // Loop through all longRuns already plucked from hand
-    for (let i = 0; i < longRunsLength; i++) {
-      const potentialMatch: Card = this.longRuns[i].getCardAt(index);
-      // If edge card from longRun matches, move to value set
-      if (potentialMatch.value === value) {
-        this.longRuns[i].move(potentialMatch, cardsOfValue);
+    try {
+      for (let i = 0; i < longRunsLength; i++) {
+        const potentialMatch: Card = this.longRuns[i].getCardAt(index);
+        // If edge card from longRun matches, move to value set
+        if (potentialMatch.value === value) {
+          this.longRuns[i].move(potentialMatch, cardsOfValue);
 
-        // If that match completes the set, move set and stop looping
-        if (cardsOfValue.length() === Hand.MINIMUM_SET) {
-          this.moveGroupToGroupArray(cardsOfValue, this.processedCards);
+          // If that match completes the set, move set and stop looping
+          if (cardsOfValue.length() === Hand.MINIMUM_SET) {
+            this.moveGroupToGroupArray(cardsOfValue, this.processedCards);
 
-          // If longRun is no longer 'long', move to processed cards
-          if (this.longRuns[i].length() === Hand.MINIMUM_SET) {
-            this.processedCards.push(_.pullAt(this.longRuns, i)[0]);
+            // If longRun is no longer 'long', move to processed cards
+            if (this.longRuns[i].length() === Hand.MINIMUM_SET) {
+              this.processedCards.push(_.pullAt(this.longRuns, i)[0]);
+            }
+            return true;
           }
-          return true;
         }
       }
+    } catch (CardNotFoundError) {
+      // Error means the card we tried to move wasn't in original run
+      // So it's fine to swallow it and move on
+      return false;
     }
     // If we got here, longRuns at index did not finish our set
     return false;
   }
 
   /**
-   * 
+   *
    * @param group potential run or set with length < Hand.MINIMUM_SET
    * @param round - current round of game, for determining wilds
    */
@@ -222,8 +244,12 @@ export class Hand extends CardGroup {
         group.add(wildCards.pop());
       } while (group.length() < Hand.MINIMUM_SET);
 
-      // Add group with wilds to processed
-      this.moveGroupToGroupArray(group, this.processedCards);
+      try {
+        // Add group with wilds to processed
+        this.moveGroupToGroupArray(group, this.processedCards);
+      } catch (error) {
+        // Cards we hoped for weren't there, move on
+      }
     }
     // If not, leave cards (including wilds) in hand
   }
