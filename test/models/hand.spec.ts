@@ -98,7 +98,7 @@ describe('Hand methods', () => {
     });
 
     it('returns multiple cards filtered by value but no Jokers', () => {
-      const handToFilter = new Hand([cardJ3, cardD3, cardD4, cardD8, cardS3, cardH13])
+      const handToFilter = new Hand([cardJ3, cardD3, cardD4, cardD8, cardS3, cardH13]);
       const expected = new CardGroup([cardD3, cardS3]);
       expect(handToFilter.findFilteredCards(3)).to.deep.equal(expected);
     });

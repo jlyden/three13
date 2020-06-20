@@ -15,9 +15,7 @@ export function transformRunArrayIntoCardGroup(runArray: number[], suit: Suit): 
  * Ref: http://stackoverflow.com/questions/7352684/how-to-find-the-groups-of-consecutive-elements-from-an-array-in-numpy
  */
 export function sortValuesIntoRuns(singleSuitCards: CardGroup): number[][] {
-  // Pull out values of this suit and sort them
-  const valuesArray = singleSuitCards.getCards().map((a) => a.value);
-  valuesArray.sort((a, b) => a - b);
+  const valuesArray = getSortedValuesFromACardGroup(singleSuitCards);
 
   let run: number[] = [];
   const sortedRuns = [run];
@@ -48,4 +46,10 @@ export function reduceCardsByValue(cards: Card[]) {
 export function removeValueFromArray(anArray: number[], value: number) {
   _.pull(anArray, value);
   return anArray;
+}
+
+export function getSortedValuesFromACardGroup(group: CardGroup): number[] {
+  const valuesArray = group.getCards().map((a) => a.value);
+  valuesArray.sort((a, b) => a - b);
+  return valuesArray;
 }

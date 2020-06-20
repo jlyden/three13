@@ -5,14 +5,15 @@ import {
   removeValueFromArray,
   sortValuesIntoRuns as sortCardValuesIntoRuns,
   transformRunArrayIntoCardGroup,
+  getSortedValuesFromACardGroup,
 } from '../utils';
 
 export class Hand extends CardGroup {
   // A run or set must have at least 3 cards in it
   static MINIMUM_SET = 3;
+  static JOKER_VALUE = 0;
 
   // For evaluating the hand at end of game
-  // TODO: private/rewire
   public processedCards: CardGroup[];
   public longRuns: CardGroup[];
 
@@ -23,10 +24,10 @@ export class Hand extends CardGroup {
   }
 
   /**
-   * Sort cards into runs and sets, then calculate penalty
+   * Sort cards into runs and sets, then returns penalty
    * @param round - current round of game, for determining wilds
    */
-  public evaluateHand(round: number) {
+  public evaluateHand(round: number): number {
     const wildCardGroup = this.findWildCards(round);
     // If hand is all wild cards, move to processed. Done.
     if (wildCardGroup.length() === round) {
@@ -40,14 +41,23 @@ export class Hand extends CardGroup {
       this.processRunsFromHand(round);
       this.processSetsFromHand(round);
     }
-    // TODO: calculate penalty based on what remains in hand - add extra wilds to any run/set
+
+    // After processing all possible runs and sets, handle wilds
+    this.handleWildsAtEndOfProcessing(round);
+
+    // Then calculate penalty
+    let penaltyPoints = 0;
+    const remainingCards: Card[] = this.getCards();
+    if (remainingCards.length > 0) {
+      penaltyPoints = this.calculatePenalty(remainingCards);
+    }
+    return penaltyPoints;
   }
 
   /**
    * @param matcher 'suit' or 'value' to be filtered by
    * @return CardGroup matching param
    * Does not remove cards from hand
-   * TODO: private/rewire
    */
   public findFilteredCards(matcher: string | number): CardGroup {
     const matchingGroup = new CardGroup();
@@ -65,7 +75,6 @@ export class Hand extends CardGroup {
    * @param round - current round of game, for determining wilds
    * @return CardGroup of Wild Cards
    * Does not remove cards from hand
-   * TODO: private/rewire
    */
   public findWildCards(round: number): CardGroup {
     const wildsArray = this.findFilteredCards(Suit.Joker);
@@ -77,7 +86,6 @@ export class Hand extends CardGroup {
    * Move valid runs from each suit out of hand
    * Leave spare cards in hand for set processing
    * @param round - current round of game, for determining wilds
-   * TODO: private/rewire
    */
   public processRunsFromHand(round: number) {
     for (const suit of Object.values(Suit)) {
@@ -103,7 +111,6 @@ export class Hand extends CardGroup {
    * @param suit to which all cards in runs belong
    * @param sortedRuns array of consecutive runs of integers
    * @param round current game round
-   * TODO: private/rewire
    */
   public removeValidRunsFromHand(round: number, sortedRuns: number[][], suit: Suit) {
     sortedRuns.forEach((run) => {
@@ -133,7 +140,6 @@ export class Hand extends CardGroup {
    *  - look in longRuns for help for 1 or 2 card sets
    *  - use wilds for help if still needed
    * TODO: do we need to worry about Jokers in round 3 or 4?
-   * TODO: private/rewire
    */
   public processSetsFromHand(round: number) {
     // Get values present in hand (excluding wild), sorted desc
@@ -170,7 +176,6 @@ export class Hand extends CardGroup {
 
   /**
    * @return array of numerical values of cards in hand, i.e. [4, 7, 12]
-   * TODO: private/rewire
    */
   public getValuesFromHand(): number[] {
     const cardsReducedArray = reduceCardsByValue(this.getCards());
@@ -246,5 +251,43 @@ export class Hand extends CardGroup {
       }
     }
     // If not, leave cards (including wilds) in hand
+  }
+
+  public handleWildsAtEndOfProcessing(round: number) {
+    const wildCardGroup = this.findWildCards(round);
+    if (wildCardGroup.length() > 0) {
+      // If able, add remaining wilds to existing runs/sets
+      if (this.processedCards.length > 0) {
+        this.moveGroup(wildCardGroup, this.processedCards[0]);
+      } else if (this.longRuns.length > 0) {
+        this.moveGroup(wildCardGroup, this.longRuns[0]);
+      }
+    }
+  }
+
+  public calculatePenalty(remainingCards: Card[]): number {
+    let penaltyPoints = 0;
+    // If you're unlucky enough to have Jokers at this point, that will cost you
+    const jokers = this.findFilteredCards('Joker');
+    if (jokers) {
+      // remove from hand
+      this.removeMany(jokers.getCards());
+
+      // add to penaltyPoints
+      penaltyPoints += jokers.length() * Hand.JOKER_VALUE;
+    }
+
+    const remainingGroup = new CardGroup(remainingCards);
+    const valuesArray = getSortedValuesFromACardGroup(remainingGroup);
+    valuesArray.forEach((value) => {
+      // Number cards are worth their value
+      if (value <= 10) {
+        penaltyPoints += value;
+      } else {
+        // Face cards are worth 10 points
+        penaltyPoints += 10;
+      }
+    });
+    return penaltyPoints;
   }
 }
