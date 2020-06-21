@@ -52,6 +52,7 @@ export class Round {
   }
 
   // NOTE: User needs to communicate discard card
+  // TODO: break up this method to re-use pieces in endRound
   public discardAfterTurn(card: Card) {
     // Get current user's hand
     const handIndex = this.getCurrentPlayerIndex();
@@ -70,13 +71,29 @@ export class Round {
 
   // NOTE: User needs to communicate discard and intention to 'Go out'
   // TODO: Tests
-  public endRound(card: Card) {
-    // set aside discard (but save in case hand is invalid)
-    // evaluate user's hand - if invalid, round continues
-    // if valid, update us score & clear user's hand
-    // set end_of_round = true: all other users get only one more turn
-    // after each discard(), evaluate each of their hands and calculate score
-    // after last user has discarded, start next round
+  public endRound(discard: Card) {
+    // Get current user's hand
+    const handIndex = this.getCurrentPlayerIndex();
+
+    try {
+      // Go out or not, user's discard becomes visibleCard
+      this.visibleCard = this.hands[handIndex].remove(discard);
+
+      // evaluate user's hand - if invalid, round continues
+      const penalty = this.hands[handIndex].evaluateHand(this.game.round);
+
+      if(penalty > 0) {
+        // This user can't go out
+        // Send this user message that they can't go out
+        // Prompt next player to play
+      }
+      // Update user score
+      // Display user's hand
+
+      // set end_of_round = true: all other users get only one more turn
+      // after each discard(), evaluate each of their hands and calculate score
+      // after last user has discarded, start next round
+    }
   }
 
   /**

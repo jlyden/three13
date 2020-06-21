@@ -45,13 +45,8 @@ export class Hand extends CardGroup {
     // After processing all possible runs and sets, handle wilds
     this.handleWildsAtEndOfProcessing(round);
 
-    // Then calculate penalty
-    let penaltyPoints = 0;
-    const remainingCards: Card[] = this.getCards();
-    if (remainingCards.length > 0) {
-      penaltyPoints = this.calculatePenalty(remainingCards);
-    }
-    return penaltyPoints;
+    // Then calculate and return penalty
+    return this.calculatePenalty();
   }
 
   /**
@@ -265,29 +260,33 @@ export class Hand extends CardGroup {
     }
   }
 
-  public calculatePenalty(remainingCards: Card[]): number {
+  public calculatePenalty(): number {
     let penaltyPoints = 0;
-    // If you're unlucky enough to have Jokers at this point, that will cost you
-    const jokers = this.findFilteredCards('Joker');
-    if (jokers) {
-      // remove from hand
-      this.removeMany(jokers.getCards());
+    const remainingCards: Card[] = this.getCards();
+    if (remainingCards.length > 0) {
+      // If you're unlucky enough to have Jokers at this point, that will cost you
+      const jokers = this.findFilteredCards('Joker');
+      if (jokers) {
+        // remove from hand
+        this.removeMany(jokers.getCards());
 
-      // add to penaltyPoints
-      penaltyPoints += jokers.length() * Hand.JOKER_VALUE;
+        // add to penaltyPoints
+        penaltyPoints += jokers.length() * Hand.JOKER_VALUE;
+      }
+
+      const remainingGroup = new CardGroup(remainingCards);
+      const valuesArray = getSortedValuesFromACardGroup(remainingGroup);
+      valuesArray.forEach((value) => {
+        // Number cards are worth their value
+        if (value <= 10) {
+          penaltyPoints += value;
+        } else {
+          // Face cards are worth 10 points
+          penaltyPoints += 10;
+        }
+      });
     }
 
-    const remainingGroup = new CardGroup(remainingCards);
-    const valuesArray = getSortedValuesFromACardGroup(remainingGroup);
-    valuesArray.forEach((value) => {
-      // Number cards are worth their value
-      if (value <= 10) {
-        penaltyPoints += value;
-      } else {
-        // Face cards are worth 10 points
-        penaltyPoints += 10;
-      }
-    });
     return penaltyPoints;
   }
 }
