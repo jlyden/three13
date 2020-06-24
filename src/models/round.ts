@@ -1,27 +1,20 @@
 import _ from 'lodash';
 import { drawMessage, discardMessage, invalidDiscardMessage } from '../constants/messages';
-import { Deck, Hand, Game, User } from '../models';
+import { Deck, Hand, Game } from '../models';
 import { Card } from './card';
-import { CardNotFoundError } from '../errors';
 
 export class Round {
-  public game: Game;
+  public gameId: number;
   public deck: Deck;
-  public hands: Hand[];
   public visibleCard: Card;
-  public currentPlayer: User;
+  public currentUser: number;
   public message: string;
 
-  constructor(game: Game) {
-    this.game = game;
+  constructor(gameId: number) {
+    this.gameId = gameId;
 
     this.deck = new Deck();
     this.deck.shuffle();
-
-    this.hands = [];
-    this.game.players.forEach(() => {
-      this.hands.push(new Hand());
-    });
   }
 
   // NOTE: User button - 'Start Round'

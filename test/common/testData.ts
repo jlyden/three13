@@ -1,12 +1,14 @@
 import { Card, User, Suit } from '../../src/models';
 
+const phonyEmail = 'test@three13.com';
+
 // Users
-export const userOne = new User(1, 'Alice');
-export const userTwo = new User(2, 'Bert');
-export const userThree = new User(3, 'Calvin');
-export const userFour = new User(4, 'Dahlia');
-export const userFive = new User(5, 'Edith');
-export const userSix = new User(6, 'Fred');
+export const userOne = new User(1, 'Alice', phonyEmail);
+export const userTwo = new User(2, 'Bert', phonyEmail);
+export const userThree = new User(3, 'Calvin', phonyEmail);
+export const userFour = new User(4, 'Dahlia', phonyEmail);
+export const userFive = new User(5, 'Edith', phonyEmail);
+export const userSix = new User(6, 'Fred', phonyEmail);
 
 // Cards
 export const cardJ3 = new Card(Suit.Joker, 3);

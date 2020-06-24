@@ -20,6 +20,10 @@ https://medium.com/javascript-in-plain-english/full-stack-mongodb-react-node-js-
 https://www.sqlitetutorial.net/sqlite-nodejs/
 
 https://material.angular.io/cdk/drag-drop/overview
+https://developers.google.com/identity/sign-in/web/sign-in
+https://angular.io/tutorial/toh-pt0
+https://www.sqlitetutorial.net/sqlite-nodejs/connect/
+
 
 https://tutorialedge.net/typescript/typescript-mongodb-beginners-tutorial/
 https://www.w3schools.com/nodejs/nodejs_mongodb_create_db.asp

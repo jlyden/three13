@@ -1,6 +1,10 @@
-import * as express from 'express';
+import { Application, Request, Response } from 'express';
 
-export const register = (app: express.Application) => {
+export let allGames = (req: Request, res: Response) => {
+  res.send('Returns all Games');
+};
+
+export const register = (app: Application) => {
   app.get('/', (req: any, res) => {
     res.status(200).send('Three 13');
   });
@@ -9,3 +13,6 @@ export const register = (app: express.Application) => {
     res.status(200).send('Game');
   });
 };
+
+
+

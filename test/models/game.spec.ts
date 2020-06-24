@@ -1,45 +1,50 @@
 import chai from 'chai';
-import { Game, User } from '../../src/models';
-import { userOne, userTwo, userThree, userFour, userFive, userSix } from '../common/testData';
+import { Game } from '../../src/models';
 
 const { expect } = chai;
 
 describe('Game methods', () => {
-  const twoUsers = [userOne, userTwo];
-  const twoPlayerGame = new Game(1, twoUsers);
-  const userSeven = new User(7, 'Gordon');
+  const twoUsers = [1,2];
 
   describe('constructor', () => {
-    it('correctly assigns players and round', () => {
-      expect(twoPlayerGame.players).to.deep.equal(twoUsers);
-      expect(twoPlayerGame.round).to.equal(3);
+    const userCountError = 'A game can only begin with 2-6 users.';
+
+    it('throws no error if acceptable user count', () => {
+      expect(() => new Game(twoUsers)).not.to.throw();
     });
 
-    it('throws error if too few players added to game', () => {
-      expect(() => new Game(2, [userOne])).to.throw('Players[] must have 2-6 members.');
+    it('throws error if too few users added to game', () => {
+      const singleUser = [1];
+      expect(() => new Game(singleUser)).to.throw(userCountError);
     });
 
-    it('throws error if too many players added to game', () => {
-      const sevenUsers = [userOne, userTwo, userThree, userFour, userFive, userSix, userSeven];
-      expect(() => new Game(3, sevenUsers)).to.throw('Players[] must have 2-6 members.');
+    it('throws error if too many users added to game', () => {
+      const sevenUsers = [1,2,3,4,5,6,7];
+      expect(() => new Game(sevenUsers)).to.throw(userCountError);
     });
   });
 
-  describe('goToNextRound', () => {
-    it('correctly advances round if not round 13', () => {
+  describe('round initialization and advancement', () => {
+    const twoPlayerGame = new Game(twoUsers);
+
+    it('starts game at round 3', () => {
+      expect(twoPlayerGame.getRound()).to.equal(3);
+    });
+
+    it('advances round if not round 13', () => {
       twoPlayerGame.goToNextRound();
-      expect(twoPlayerGame.round).to.equal(4);
+      expect(twoPlayerGame.getRound()).to.equal(4);
     });
 
     it('does not advance round past round 13', () => {
-      // Setup
-      while (twoPlayerGame.round < 13) {
+      // Arrange
+      while (twoPlayerGame.getRound() < 13) {
         twoPlayerGame.goToNextRound();
       }
-      expect(twoPlayerGame.round).to.equal(13);
+      expect(twoPlayerGame.getRound()).to.equal(13);
 
       twoPlayerGame.goToNextRound();
-      expect(twoPlayerGame.round).to.equal(13);
+      expect(twoPlayerGame.getRound()).to.equal(13);
     });
   });
 });

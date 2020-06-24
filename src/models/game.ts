@@ -1,28 +1,30 @@
-import { User } from '../models';
-
 export class Game {
-  // 313 starts at round 3 and goes to round 13
-  static STARTING_ROUND = 3;
+  static INITIAL_ROUND = 3;
+  static FINAL_ROUND = 13;
   static PLAYER_COUNT_MIN = 2;
   static PLAYER_COUNT_MAX = 6;
 
-  public id: number;
-  public players: User[];
-  public round: number;
+  private userIds: number[];
+  private currentRound: number;
 
-  constructor(id: number, players: User[]) {
-    this.id = id; // TODO: Refactor when there's a db to provide this
-    if (players.length >= Game.PLAYER_COUNT_MIN && players.length <= Game.PLAYER_COUNT_MAX) {
-      this.players = players;
+  constructor(userIds: number[]) {
+    if (userIds.length >= Game.PLAYER_COUNT_MIN && userIds.length <= Game.PLAYER_COUNT_MAX) {
+      this.userIds = userIds;
     } else {
-      throw new RangeError('Players[] must have 2-6 members.');
+      throw new RangeError('A game can only begin with 2-6 users.');
     }
-    this.round = Game.STARTING_ROUND;
+    this.currentRound = Game.INITIAL_ROUND;
+  }
+
+  public getRound() {
+    return this.currentRound;
   }
 
   public goToNextRound() {
-    if (this.round !== 13) {
-      this.round++;
+    if (this.currentRound !== Game.FINAL_ROUND) {
+      this.currentRound++;
+    } else {
+      throw new RangeError('Game ends after round 13');
     }
   }
 }
