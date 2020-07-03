@@ -93,6 +93,10 @@ export class Round {
       // set end_of_round = true: all other users get only one more turn
       // after each discard(), evaluate each of their hands and calculate score
       // after last user has discarded, start next round
+    } catch(err) {
+      // Deal with it
+    } finally {
+      // What do we need here?
     }
   }
 
