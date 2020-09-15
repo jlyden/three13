@@ -1,5 +1,39 @@
 313 via node/express
 
+React for front end
+Express server
+Node serving up routes
+Mongo db
+Google for user auth
+
+What do we need to store?
+very few updates
+user = {
+  user_id,
+  nickname,
+  email
+}
+
+updates after each round (scores & round_id)
+game = {
+  game_id,
+  scores { user_id: score },
+  round_ids [],
+}
+
+updates with every user_play
+round = {
+  round_id,
+  deck,
+  visible_card,
+  hands = { user_id: user_hand },
+}
+
+
+Store data in session:
+https://medium.com/javascript-in-plain-english/storing-user-sessions-on-the-server-with-express-session-422fe11bc500#:~:text=To%20store%20confidential%20session%20data,to%20access%20the%20session%20data.
+
+
 *Todo*
 Define round class including deal() - done and go_out() - TODO
 Define user class - basic, done
