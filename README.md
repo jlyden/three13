@@ -12,15 +12,14 @@
 ### Phase Two
 * Multiple decks depending on round & # of players
 
-
 ## Expected Routes
-* GET games/ -> [get all user's games, indicate round - flag ones where it's user's turn]
-* POST games/:id/round/:number -> startRound()
-* PUT games/:id/round/:number -> takeVisibleCard(), drawFromDeck(), discardAfterTurn(), endRound()
+* GET /games -> [get all user's games, indicate round - flag ones where it's user's turn]
+* GET games/:id -> [get current cards for current round - userHand + visibleCard]
+* POST /games/:id -> startRound()
+* PUT /games/:id -> takeVisibleCard(), drawFromDeck(), discardAfterTurn(), endRound()
 
-## DB
-* What if I had a Card table? With two full decks in it ... and just refer to cards by id?
-** Then a cardGroup (deck, hand) becomes an int array, and stored in db like:
+* GET/POST login/ -> display login page/login user
+* GET/POST register/ -> display register page/register user (google auth only)
 
 
 ## References
@@ -37,4 +36,5 @@ https://www.w3schools.com/nodejs/nodejs_mongodb_create_db.asp
 https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n
 
 https://bezkoder.com/react-node-express-mysql/
+https://bezkoder.com/node-js-rest-api-express-mysql/
 https://reactjs.org/docs/thinking-in-react.html
