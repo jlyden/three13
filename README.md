@@ -18,6 +18,10 @@
 * POST games/:id/round/:number -> startRound()
 * PUT games/:id/round/:number -> takeVisibleCard(), drawFromDeck(), discardAfterTurn(), endRound()
 
+## DB
+* What if I had a Card table? With two full decks in it ... and just refer to cards by id?
+** Then a cardGroup (deck, hand) becomes an int array, and stored in db like:
+
 
 ## References
 https://auth0.com/blog/create-a-simple-and-stylish-node-express-app/
